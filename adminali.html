@@ -19,12 +19,20 @@
     .form-group { margin-bottom: 10px; text-align: right; }
     .form-group label { font-size: 12px; font-weight: bold; color: #475569; display: block; margin-bottom: 4px; }
     .form-input { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 13px; outline: none; }
+    
+    .file-input-box {
+      border: 2px dashed #2563eb; background: #eff6ff; padding: 12px; text-align: center; border-radius: 8px; cursor: pointer;
+    }
+    .file-input-box input[type="file"] { display: none; }
+    .preview-img { max-width: 100%; max-height: 150px; border-radius: 6px; margin-top: 8px; display: none; margin-left: auto; margin-right: auto; }
+
     .add-btn { width: 100%; background: #2563eb; color: #fff; border: none; padding: 12px; font-weight: bold; border-radius: 8px; cursor: pointer; font-size: 14px; margin-top: 8px; }
 
     .items-list-box { max-width: 500px; margin: 0 auto; }
     .item-row { background: #fff; border: 1px solid #e2e8f0; padding: 10px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
     .item-title { font-size: 12px; font-weight: bold; }
     .del-btn { background: #ef4444; color: white; border: none; padding: 6px 10px; font-size: 11px; border-radius: 6px; cursor: pointer; }
+    #loader { font-size: 12px; color: #2563eb; font-weight: bold; text-align: center; display: none; margin-top: 6px; }
   </style>
 </head>
 <body>
@@ -43,7 +51,7 @@
     
     <div class="form-group">
       <label>علی ایکسپریس کا کاپی شدہ متن پیسٹ کریں:</label>
-      <textarea id="smartPastedText" class="form-input" rows="3" placeholder="متن یہاں پیسٹ کریں..." oninput="autoParseText()"></textarea>
+      <textarea id="smartPastedText" class="form-input" rows="3" placeholder="متن یا لنک یہاں پیسٹ کریں..." oninput="autoParseText()"></textarea>
     </div>
 
     <div class="form-group">
@@ -66,15 +74,17 @@
       <input type="text" id="pLink" class="form-input" placeholder="https://..." dir="ltr">
     </div>
 
+    <!-- Gallery Image Upload Box -->
     <div class="form-group">
-      <label>تصویر کا لنک (Image URL):</label>
-      <input type="text" id="pImg" class="form-input" placeholder="https://... (تصویر کا لنک یہاں رکھیں)" dir="ltr">
+      <label>گیلری سے تصویر منتخب کریں:</label>
+      <div class="file-input-box" onclick="document.getElementById('imgFileInput').click()">
+        <span id="fileStatusText">📁 گیلری سے تصویر منتخب کرنے کے لیے یہاں کلک کریں</span>
+        <input type="file" id="imgFileInput" accept="image/*" onchange="previewSelectedImage(event)">
+        <img id="previewImg" class="preview-img" alt="Preview">
+      </div>
     </div>
 
-    <div class="form-group">
-      <label>ویڈیو کا لنک (Video URL - اختیاری):</label>
-      <input type="text" id="pVideo" class="form-input" placeholder="https://... (MP4 یا YouTube لنک)" dir="ltr">
-    </div>
+    <div id="loader">تصویر اپلوڈ ہو رہی ہے، براہ کرم انتظار کریں... ⏳</div>
 
     <button class="add-btn" onclick="addNewProduct()">پروڈکٹ شائع کریں 🚀</button>
   </div>
@@ -82,7 +92,7 @@
   <div class="items-list-box" id="adminItemsList" style="display:none;"></div>
 
   <script>
-    // Updated Firebase Configuration
+    // Firebase Configuration
     const firebaseConfig = {
       apiKey: "AIzaSyDp--gVk61VaLCK-4yygwN8Oj9CpDIp05E",
       authDomain: "kist-65357.firebaseapp.com",
@@ -97,6 +107,8 @@
     const db = firebase.database().ref("products");
 
     const ADMIN_PIN = "1234";
+    const IMGBB_API_KEY = "66dcdf21e30733bfd85545d9fb5e76c4";
+    let selectedFile = null;
 
     function checkPin() {
       const pin = document.getElementById('adminPinInput').value;
@@ -124,6 +136,21 @@
       if (cleanTitle) document.getElementById('pTitle').value = cleanTitle.substring(0, 80);
     }
 
+    function previewSelectedImage(event) {
+      const file = event.target.files[0];
+      if (file) {
+        selectedFile = file;
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const img = document.getElementById('previewImg');
+          img.src = e.target.result;
+          img.style.display = 'block';
+          document.getElementById('fileStatusText').innerText = "تصویر منتخب ہو گئی ہے ✅";
+        }
+        reader.readAsDataURL(file);
+      }
+    }
+
     function renderAdminList() {
       const container = document.getElementById('adminItemsList');
       db.on('value', (snapshot) => {
@@ -146,24 +173,44 @@
       });
     }
 
-    function addNewProduct() {
+    async function addNewProduct() {
       const title = document.getElementById('pTitle').value.trim();
       const desc = document.getElementById('pDesc').value.trim();
-      const img = document.getElementById('pImg').value.trim();
-      const video = document.getElementById('pVideo').value.trim();
       const price = document.getElementById('pPrice').value.trim();
       const link = document.getElementById('pLink').value.trim();
+      const loader = document.getElementById('loader');
 
       if (!title || !link) {
         alert("براہ کرم عنوان اور افیلی ایٹ لنک درج کریں!");
         return;
       }
 
+      let uploadedImageUrl = "https://via.placeholder.com/150";
+
+      if (selectedFile) {
+        loader.style.display = "block";
+        const formData = new FormData();
+        formData.append("image", selectedFile);
+
+        try {
+          const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, {
+            method: "POST",
+            body: formData
+          });
+          const imgData = await res.json();
+          if (imgData.success) {
+            uploadedImageUrl = imgData.data.url;
+          }
+        } catch (e) {
+          alert("تصویر اپلوڈ کرنے میں مسئلہ آیا، ڈیفالٹ امیج استعمال ہو رہی ہے۔");
+        }
+        loader.style.display = "none";
+      }
+
       db.push({
         title: title,
         desc: desc || "",
-        img: img || "https://via.placeholder.com/150",
-        video: video || "",
+        img: uploadedImageUrl,
         price: price || "Best Price",
         link: link,
         timestamp: Date.now()
@@ -171,10 +218,12 @@
         document.getElementById('smartPastedText').value = '';
         document.getElementById('pTitle').value = '';
         document.getElementById('pDesc').value = '';
-        document.getElementById('pImg').value = '';
-        document.getElementById('pVideo').value = '';
         document.getElementById('pPrice').value = '';
         document.getElementById('pLink').value = '';
+        document.getElementById('imgFileInput').value = '';
+        document.getElementById('previewImg').style.display = 'none';
+        document.getElementById('fileStatusText').innerText = "📁 گیلری سے تصویر منتخب کرنے کے لیے یہاں کلک کریں";
+        selectedFile = null;
 
         alert("پروڈکٹ کامیابی سے شامل کر دی گئی ہے!");
       }).catch((err) => {
