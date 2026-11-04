@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ایڈمن پینل - نئی پروڈکٹ شامل کریں</title>
-  <!-- Firebase SDK Links -->
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
   <style>
@@ -14,7 +13,7 @@
     .form-group { margin-bottom: 12px; text-align: right; }
     .form-group label { font-size: 12px; font-weight: bold; color: #475569; display: block; margin-bottom: 4px; }
     
-    input[type="text"], textarea {
+    input[type="text"], textarea, select {
       width: 100%;
       padding: 12px;
       border: 1px solid #cbd5e1;
@@ -57,6 +56,24 @@
     <div class="form-group">
       <label>پروڈکٹ کا عنوان (Title):</label>
       <input type="text" id="pTitle" placeholder="عنوان...">
+    </div>
+
+    <div class="form-group">
+      <label>کیٹیگری منتخب کریں (Category):</label>
+      <select id="pCategory">
+        <option value="all">تمام (All)</option>
+        <option value="kids">بچوں کے کپڑے (Kids Clothes)</option>
+        <option value="watch">گھڑی (Watch)</option>
+        <option value="mobile">موبائل فون (Mobile)</option>
+        <option value="laptop">لیپ ٹاپ (Laptop)</option>
+        <option value="electronics">الیکٹرانکس (Electronics)</option>
+        <option value="keyboard">کی بورڈ (Keyboard)</option>
+        <option value="shoes">شوز (Shoes)</option>
+        <option value="kitchen">کچن / برتن (Kitchen)</option>
+        <option value="medical">میڈیکل سامان (Medical)</option>
+        <option value="beauty">بیوٹی کریم (Beauty)</option>
+        <option value="jewelry">جیولری سامان (Jewelry)</option>
+      </select>
     </div>
 
     <div class="form-group">
@@ -170,6 +187,7 @@
 
     async function addNewProduct() {
       const title = document.getElementById('pTitle').value.trim();
+      const category = document.getElementById('pCategory').value;
       const desc = document.getElementById('pDesc').value.trim();
       const price = document.getElementById('pPrice').value.trim();
       const link = document.getElementById('pLink').value.trim();
@@ -211,6 +229,7 @@
 
       db.push({
         title: title,
+        category: category,
         desc: desc || "",
         images: uploadedImageUrls,
         img: uploadedImageUrls[0],
