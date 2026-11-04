@@ -2,37 +2,28 @@
 <html lang="ur" dir="rtl">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ایڈمن پینل - نئی پروڈکٹ شامل کریں</title>
   <!-- Firebase SDK Links -->
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; -webkit-tap-highlight-color: transparent; }
-    body { background-color: #f8fafc; color: #0f172a; padding: 14px; padding-bottom: 50px; }
-
-    .admin-card { background: #ffffff; border: 2px solid #2563eb; border-radius: 12px; padding: 16px; max-width: 500px; margin: 0 auto 20px auto; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+    body { background-color: #f8fafc; color: #0f172a; padding: 14px; font-family: sans-serif; }
+    .admin-card { background: #ffffff; border: 2px solid #2563eb; border-radius: 12px; padding: 16px; max-width: 500px; margin: 0 auto 20px auto; }
     .admin-card h2 { font-size: 16px; color: #2563eb; margin-bottom: 12px; text-align: center; }
-    
     .form-group { margin-bottom: 12px; text-align: right; }
     .form-group label { font-size: 12px; font-weight: bold; color: #475569; display: block; margin-bottom: 4px; }
     
-    /* Interactive Mobile Input Fields Fix */
-    .form-input {
+    input[type="text"], textarea {
       width: 100%;
       padding: 12px;
       border: 1px solid #cbd5e1;
       border-radius: 8px;
       font-size: 14px;
-      outline: none;
-      background-color: #ffffff !important;
-      color: #0f172a !important;
-      display: block;
-      -webkit-user-select: text !important;
-      user-select: text !important;
-      cursor: text;
+      box-sizing: border-box;
+      background-color: #ffffff;
+      color: #000000;
     }
-    .form-input:focus { border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15); }
     
     .file-input-box {
       border: 2px dashed #2563eb; background: #eff6ff; padding: 14px; text-align: center; border-radius: 8px; cursor: pointer;
@@ -60,30 +51,29 @@
     
     <div class="form-group">
       <label>علی ایکسپریس کا کاپی شدہ متن پیسٹ کریں:</label>
-      <textarea id="smartPastedText" class="form-input" rows="3" placeholder="متن یا لنک یہاں پیسٹ کریں..." oninput="autoParseText()"></textarea>
+      <textarea id="smartPastedText" rows="3" placeholder="متن یا لنک یہاں پیسٹ کریں..." oninput="autoParseText()"></textarea>
     </div>
 
     <div class="form-group">
       <label>پروڈکٹ کا عنوان (Title):</label>
-      <input type="text" id="pTitle" class="form-input" placeholder="عنوان...">
+      <input type="text" id="pTitle" placeholder="عنوان...">
     </div>
 
     <div class="form-group">
       <label>تفصیل/ڈسکرپشن (Description):</label>
-      <textarea id="pDesc" class="form-input" rows="2" placeholder="پروڈکٹ کی کچھ تفصیل درج کریں..."></textarea>
+      <textarea id="pDesc" rows="2" placeholder="پروڈکٹ کی کچھ تفصیل درج کریں..."></textarea>
     </div>
 
     <div class="form-group">
       <label>قیمت (Price):</label>
-      <input type="text" id="pPrice" class="form-input" placeholder="SAR 0.00">
+      <input type="text" id="pPrice" placeholder="SAR 0.00">
     </div>
 
     <div class="form-group">
       <label>افیلی ایٹ لنک (Affiliate Link):</label>
-      <input type="text" id="pLink" class="form-input" placeholder="https://..." dir="ltr">
+      <input type="text" id="pLink" placeholder="https://..." dir="ltr">
     </div>
 
-    <!-- Gallery Multiple Images Box -->
     <div class="form-group">
       <label>گیلری سے (3 یا 4) تصاویر منتخب کریں:</label>
       <div class="file-input-box" onclick="document.getElementById('imgFileInput').click()">
@@ -101,7 +91,6 @@
   <div class="items-list-box" id="adminItemsList"></div>
 
   <script>
-    // Firebase Configuration
     const firebaseConfig = {
       apiKey: "AIzaSyDp--gVk61VaLCK-4yygwN8Oj9CpDIp05E",
       authDomain: "kist-65357.firebaseapp.com",
