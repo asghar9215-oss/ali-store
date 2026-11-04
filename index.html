@@ -4,6 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title id="pageTitle">سعودی بیسٹ ڈیلز & ڈسکاؤنٹس</title>
+  <!-- Firebase SDK Links -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
     body { background-color: #f1f5f9; color: #0f172a; padding: 10px; padding-bottom: 50px; }
@@ -14,7 +17,7 @@
 
     .header { background: #e11d48; color: #ffffff; text-align: center; padding: 14px; border-radius: 12px; font-weight: bold; font-size: 18px; margin-bottom: 12px; box-shadow: 0 4px 10px rgba(225, 29, 72, 0.2); }
 
-    .adsterra-banner { background: #ffffff; border: 1px dashed #cbd5e1; border-radius: 10px; padding: 8px; text-align: center; margin-bottom: 12px; min-height: 60px; display: flex; justify-content: center; align-items: center; }
+    .adsterra-banner { background: #ffffff; border: 1px dashed #cbd5e1; border-radius: 10px; padding: 8px; text-align: center; margin-bottom: 12px; min-height: 60px; display: flex; justify-content: center; align-items: center; overflow: hidden; }
 
     .products-container { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
     .product-card { background: #ffffff; border-radius: 12px; padding: 10px; border: 1px solid #e2e8f0; box-shadow: 0 2px 8px rgba(0,0,0,0.05); display: flex; flex-direction: column; justify-content: space-between; }
@@ -35,17 +38,33 @@
 
   <div class="header" id="appHeader">🛍️ سعودی بیسٹ ڈیلز & ڈسکاؤنٹس</div>
 
-  <div class="adsterra-banner">
+  <!-- Adsterra Top Banner Place -->
+  <div class="adsterra-banner" id="topAdBanner">
     <span style="color: #94a3b8; font-size: 11px;">[ Adsterra Top Banner Ad Here ]</span>
   </div>
 
   <div class="products-container" id="productsGrid"></div>
 
-  <div class="adsterra-banner" style="margin-top: 16px;">
+  <!-- Adsterra Bottom Banner Place -->
+  <div class="adsterra-banner" id="bottomAdBanner" style="margin-top: 16px;">
     <span style="color: #94a3b8; font-size: 11px;">[ Adsterra Bottom Banner Ad Here ]</span>
   </div>
 
   <script>
+    // Updated Firebase Configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyDp--gVk61VaLCK-4yygwN8Oj9CpDIp05E",
+      authDomain: "kist-65357.firebaseapp.com",
+      projectId: "kist-65357",
+      storageBucket: "kist-65357.firebasestorage.app",
+      messagingSenderId: "200844711272",
+      appId: "1:200844711272:web:d980a03c9fae8b8d7972dd",
+      measurementId: "G-LCZ8N3GKTE",
+      databaseURL: "https://kist-65357-default-rtdb.firebaseio.com"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database().ref("products");
+
     let currentLang = 'ur';
 
     const translations = {
@@ -87,35 +106,38 @@
 
     function renderProducts() {
       const grid = document.getElementById('productsGrid');
-      const productsList = JSON.parse(localStorage.getItem('my_ali_products')) || [];
 
-      if (productsList.length === 0) {
-        grid.innerHTML = `<p style="text-align: center; grid-column: span 2; padding: 20px; color: #64748b;">${translations[currentLang].emptyMsg}</p>`;
-        return;
-      }
-
-      grid.innerHTML = '';
-      productsList.forEach((item) => {
-        let mediaHtml = `<img src="${item.img}" class="product-media" onerror="this.src='https://via.placeholder.com/150'">`;
-        
-        const ytEmbed = getYouTubeEmbedUrl(item.video || item.img);
-        if (ytEmbed) {
-          mediaHtml = `<iframe class="product-media" src="${ytEmbed}" allowfullscreen></iframe>`;
-        } else if (item.video && item.video.includes('.mp4')) {
-          mediaHtml = `<video class="product-media" controls><source src="${item.video}" type="video/mp4"></video>`;
+      db.on('value', (snapshot) => {
+        const data = snapshot.val();
+        if (!data) {
+          grid.innerHTML = `<p style="text-align: center; grid-column: span 2; padding: 20px; color: #64748b;">${translations[currentLang].emptyMsg}</p>`;
+          return;
         }
 
-        grid.innerHTML += `
-          <div class="product-card">
-            <div>
-              ${mediaHtml}
-              <div class="product-title">${item.title}</div>
-              ${item.desc ? `<div class="product-desc">${item.desc}</div>` : ''}
-              <div class="product-price">${item.price}</div>
+        grid.innerHTML = '';
+        Object.keys(data).reverse().forEach((key) => {
+          const item = data[key];
+          let mediaHtml = `<img src="${item.img}" class="product-media" onerror="this.src='https://via.placeholder.com/150'">`;
+          
+          const ytEmbed = getYouTubeEmbedUrl(item.video || item.img);
+          if (ytEmbed) {
+            mediaHtml = `<iframe class="product-media" src="${ytEmbed}" allowfullscreen></iframe>`;
+          } else if (item.video && item.video.includes('.mp4')) {
+            mediaHtml = `<video class="product-media" controls><source src="${item.video}" type="video/mp4"></video>`;
+          }
+
+          grid.innerHTML += `
+            <div class="product-card">
+              <div>
+                ${mediaHtml}
+                <div class="product-title">${item.title}</div>
+                ${item.desc ? `<div class="product-desc">${item.desc}</div>` : ''}
+                <div class="product-price">${item.price}</div>
+              </div>
+              <a href="${item.link}" target="_blank" class="buy-btn">${translations[currentLang].buyBtn}</a>
             </div>
-            <a href="${item.link}" target="_blank" class="buy-btn">${translations[currentLang].buyBtn}</a>
-          </div>
-        `;
+          `;
+        });
       });
     }
 
