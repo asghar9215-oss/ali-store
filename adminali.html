@@ -2,23 +2,40 @@
 <html lang="ur" dir="rtl">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>ایڈمن پینل - نئی پروڈکٹ شامل کریں</title>
   <!-- Firebase SDK Links -->
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, sans-serif; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; -webkit-tap-highlight-color: transparent; }
     body { background-color: #f8fafc; color: #0f172a; padding: 14px; padding-bottom: 50px; }
 
     .admin-card { background: #ffffff; border: 2px solid #2563eb; border-radius: 12px; padding: 16px; max-width: 500px; margin: 0 auto 20px auto; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
     .admin-card h2 { font-size: 16px; color: #2563eb; margin-bottom: 12px; text-align: center; }
-    .form-group { margin-bottom: 10px; text-align: right; }
+    
+    .form-group { margin-bottom: 12px; text-align: right; }
     .form-group label { font-size: 12px; font-weight: bold; color: #475569; display: block; margin-bottom: 4px; }
-    .form-input { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 13px; outline: none; }
+    
+    /* Interactive Mobile Input Fields Fix */
+    .form-input {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      font-size: 14px;
+      outline: none;
+      background-color: #ffffff !important;
+      color: #0f172a !important;
+      display: block;
+      -webkit-user-select: text !important;
+      user-select: text !important;
+      cursor: text;
+    }
+    .form-input:focus { border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15); }
     
     .file-input-box {
-      border: 2px dashed #2563eb; background: #eff6ff; padding: 12px; text-align: center; border-radius: 8px; cursor: pointer;
+      border: 2px dashed #2563eb; background: #eff6ff; padding: 14px; text-align: center; border-radius: 8px; cursor: pointer;
     }
     .file-input-box input[type="file"] { display: none; }
     
@@ -27,18 +44,18 @@
     }
     .preview-img { width: 65px; height: 65px; object-fit: cover; border-radius: 6px; border: 1px solid #2563eb; }
 
-    .add-btn { width: 100%; background: #2563eb; color: #fff; border: none; padding: 12px; font-weight: bold; border-radius: 8px; cursor: pointer; font-size: 14px; margin-top: 8px; }
+    .add-btn { width: 100%; background: #2563eb; color: #fff; border: none; padding: 14px; font-weight: bold; border-radius: 8px; cursor: pointer; font-size: 15px; margin-top: 10px; }
 
     .items-list-box { max-width: 500px; margin: 0 auto; }
     .item-row { background: #fff; border: 1px solid #e2e8f0; padding: 10px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-    .item-title { font-size: 12px; font-weight: bold; }
+    .item-title { font-size: 12px; font-weight: bold; color: #1e293b; }
     .del-btn { background: #ef4444; color: white; border: none; padding: 6px 10px; font-size: 11px; border-radius: 6px; cursor: pointer; }
     #loader { font-size: 12px; color: #2563eb; font-weight: bold; text-align: center; display: none; margin-top: 6px; }
   </style>
 </head>
 <body>
 
-  <div class="admin-card" id="adminContent">
+  <div class="admin-card">
     <h2>⚡ ایڈمن اپلوڈ پینل (AliExpress)</h2>
     
     <div class="form-group">
