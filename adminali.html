@@ -8,15 +8,10 @@
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, sans-serif; }
     body { background-color: #f8fafc; color: #0f172a; padding: 14px; padding-bottom: 50px; }
     
-    .admin-card {
-      background: #ffffff;
-      border: 2px solid #2563eb;
-      border-radius: 12px;
-      padding: 16px;
-      max-width: 500px;
-      margin: 0 auto 20px auto;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-    }
+    .login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0f172a; display: flex; justify-content: center; align-items: center; z-index: 1000; }
+    .login-box { background: white; padding: 20px; border-radius: 12px; text-align: center; width: 90%; max-width: 350px; }
+
+    .admin-card { background: #ffffff; border: 2px solid #2563eb; border-radius: 12px; padding: 16px; max-width: 500px; margin: 0 auto 20px auto; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
     .admin-card h2 { font-size: 16px; color: #2563eb; margin-bottom: 12px; text-align: center; }
     .form-group { margin-bottom: 10px; text-align: right; }
     .form-group label { font-size: 12px; font-weight: bold; color: #475569; display: block; margin-bottom: 4px; }
@@ -31,21 +26,35 @@
 </head>
 <body>
 
-  <div class="admin-card">
+  <!-- Password Screen -->
+  <div class="login-overlay" id="loginOverlay">
+    <div class="login-box">
+      <h3 style="margin-bottom:12px;">🔒 ایڈمن پاسورڈ درج کریں</h3>
+      <input type="password" id="adminPinInput" class="form-input" placeholder="پاسورڈ پن درج کریں..." style="text-align:center; margin-bottom:12px;">
+      <button class="add-btn" onclick="checkPin()">لاگ ان کریں</button>
+    </div>
+  </div>
+
+  <div class="admin-card" id="adminContent" style="display:none;">
     <h2>⚡ ایڈمن اپلوڈ پینل (AliExpress)</h2>
     
     <div class="form-group">
-      <label>علی ایکسپریس کا کاپی شدہ پورا مواد پیسٹ کریں:</label>
-      <textarea id="smartPastedText" class="form-input" rows="3" placeholder="ایپ سے کاپی کیا ہوا پورا ٹیکسٹ یہاں پیسٹ کریں..." oninput="autoParseText()"></textarea>
+      <label>علی ایکسپریس کا کاپی شدہ متن پیسٹ کریں:</label>
+      <textarea id="smartPastedText" class="form-input" rows="3" placeholder="متن یہاں پیسٹ کریں..." oninput="autoParseText()"></textarea>
     </div>
 
     <div class="form-group">
       <label>پروڈکٹ کا عنوان (Title):</label>
-      <input type="text" id="pTitle" class="form-input" placeholder="عنوان خود بخود الگ ہوگا...">
+      <input type="text" id="pTitle" class="form-input" placeholder="عنوان...">
     </div>
 
     <div class="form-group">
-      <label>قیمت (Price in SAR):</label>
+      <label>تفصیل/ڈسکرپشن (Description):</label>
+      <textarea id="pDesc" class="form-input" rows="2" placeholder="پروڈکٹ کی کچھ تفصیل درج کریں..."></textarea>
+    </div>
+
+    <div class="form-group">
+      <label>قیمت (Price):</label>
       <input type="text" id="pPrice" class="form-input" placeholder="SAR 0.00">
     </div>
 
@@ -56,17 +65,34 @@
 
     <div class="form-group">
       <label>تصویر کا لنک (Image URL):</label>
-      <input type="text" id="pImg" class="form-input" placeholder="https://..." dir="ltr">
+      <input type="text" id="pImg" class="form-input" placeholder="https://... (تصویر کا لنک یہاں رکھیں)" dir="ltr">
+    </div>
+
+    <div class="form-group">
+      <label>ویڈیو کا لنک (Video URL - اختیاری):</label>
+      <input type="text" id="pVideo" class="form-input" placeholder="https://... (MP4 یا YouTube لنک)" dir="ltr">
     </div>
 
     <button class="add-btn" onclick="addNewProduct()">پروڈکٹ شائع کریں 🚀</button>
   </div>
 
-  <div class="items-list-box" id="adminItemsList">
-    <!-- اپلوڈ شدہ پروڈکٹس یہاں نظر آئیں گی -->
-  </div>
+  <div class="items-list-box" id="adminItemsList" style="display:none;"></div>
 
   <script>
+    const ADMIN_PIN = "1234"; // یہاں اپنا سیکرٹ پاسورڈ تبدیل کر سکتے ہیں
+
+    function checkPin() {
+      const pin = document.getElementById('adminPinInput').value;
+      if (pin === ADMIN_PIN) {
+        document.getElementById('loginOverlay').style.display = 'none';
+        document.getElementById('adminContent').style.display = 'block';
+        document.getElementById('adminItemsList').style.display = 'block';
+        renderAdminList();
+      } else {
+        alert("غلط پاسورڈ! دوبارہ کوشش کریں۔");
+      }
+    }
+
     function autoParseText() {
       const raw = document.getElementById('smartPastedText').value;
       if (!raw) return;
@@ -103,19 +129,23 @@
 
     function addNewProduct() {
       const title = document.getElementById('pTitle').value.trim();
+      const desc = document.getElementById('pDesc').value.trim();
       const img = document.getElementById('pImg').value.trim();
+      const video = document.getElementById('pVideo').value.trim();
       const price = document.getElementById('pPrice').value.trim();
       const link = document.getElementById('pLink').value.trim();
 
       if (!title || !link) {
-        alert("براہ کرم عنوان اور لنک درج کریں!");
+        alert("براہ کرم عنوان اور افیلی ایٹ لنک درج کریں!");
         return;
       }
 
       let productsList = JSON.parse(localStorage.getItem('my_ali_products')) || [];
       productsList.unshift({
         title: title,
+        desc: desc || "",
         img: img || "https://via.placeholder.com/150",
+        video: video || "",
         price: price || "Best Price",
         link: link
       });
@@ -124,7 +154,9 @@
 
       document.getElementById('smartPastedText').value = '';
       document.getElementById('pTitle').value = '';
+      document.getElementById('pDesc').value = '';
       document.getElementById('pImg').value = '';
+      document.getElementById('pVideo').value = '';
       document.getElementById('pPrice').value = '';
       document.getElementById('pLink').value = '';
 
@@ -140,8 +172,6 @@
         renderAdminList();
       }
     }
-
-    window.onload = renderAdminList;
   </script>
 </body>
 </html>
