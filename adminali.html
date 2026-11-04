@@ -14,24 +14,13 @@
     .form-group label { font-size: 12px; font-weight: bold; color: #475569; display: block; margin-bottom: 4px; }
     
     input[type="text"], textarea, select {
-      width: 100%;
-      padding: 12px;
-      border: 1px solid #cbd5e1;
-      border-radius: 8px;
-      font-size: 14px;
-      box-sizing: border-box;
-      background-color: #ffffff;
-      color: #000000;
+      width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px; box-sizing: border-box; background-color: #ffffff; color: #000000;
     }
     
-    .file-input-box {
-      border: 2px dashed #2563eb; background: #eff6ff; padding: 14px; text-align: center; border-radius: 8px; cursor: pointer;
-    }
+    .file-input-box { border: 2px dashed #2563eb; background: #eff6ff; padding: 14px; text-align: center; border-radius: 8px; cursor: pointer; }
     .file-input-box input[type="file"] { display: none; }
     
-    .preview-container {
-      display: flex; gap: 6px; overflow-x: auto; margin-top: 8px; padding-bottom: 4px; justify-content: center; flex-wrap: wrap;
-    }
+    .preview-container { display: flex; gap: 6px; overflow-x: auto; margin-top: 8px; padding-bottom: 4px; justify-content: center; flex-wrap: wrap; }
     .preview-img { width: 65px; height: 65px; object-fit: cover; border-radius: 6px; border: 1px solid #2563eb; }
 
     .add-btn { width: 100%; background: #2563eb; color: #fff; border: none; padding: 14px; font-weight: bold; border-radius: 8px; cursor: pointer; font-size: 15px; margin-top: 10px; }
@@ -39,11 +28,22 @@
     .items-list-box { max-width: 500px; margin: 0 auto; }
     .item-row { background: #fff; border: 1px solid #e2e8f0; padding: 10px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
     .item-title { font-size: 12px; font-weight: bold; color: #1e293b; }
+    .approve-btn { background: #22c55e; color: white; border: none; padding: 6px 10px; font-size: 11px; border-radius: 6px; cursor: pointer; margin-left: 4px; }
     .del-btn { background: #ef4444; color: white; border: none; padding: 6px 10px; font-size: 11px; border-radius: 6px; cursor: pointer; }
     #loader { font-size: 12px; color: #2563eb; font-weight: bold; text-align: center; display: none; margin-top: 6px; }
   </style>
 </head>
 <body>
+
+  <!-- Admin Settings Box for Tracking Tag -->
+  <div class="admin-card" style="border-color: #16a34a;">
+    <h2 style="color: #16a34a;">⚙️ اپنا علی ایکسپریس Tracking Tag سیٹ کریں</h2>
+    <div class="form-group">
+      <label>آپ کا Tracking ID / Tag:</label>
+      <input type="text" id="adminTagInput" placeholder="مثال: my_ali_store_2024" dir="ltr">
+    </div>
+    <button class="add-btn" style="background: #16a34a;" onclick="saveAdminTag()">ٹیگ محفوظ کریں 💾</button>
+  </div>
 
   <div class="admin-card">
     <h2>⚡ ایڈمن اپلوڈ پینل (AliExpress)</h2>
@@ -61,24 +61,18 @@
     <div class="form-group">
       <label>کیٹیگری منتخب کریں (Category):</label>
       <select id="pCategory">
-        <option value="all">تمام (All)</option>
-        <option value="kids">بچوں کے کپڑے (Kids Clothes)</option>
-        <option value="watch">گھڑی (Watch)</option>
-        <option value="mobile">موبائل فون (Mobile)</option>
-        <option value="laptop">لیپ ٹاپ (Laptop)</option>
-        <option value="electronics">الیکٹرانکس (Electronics)</option>
-        <option value="keyboard">کی بورڈ (Keyboard)</option>
-        <option value="shoes">شوز (Shoes)</option>
-        <option value="kitchen">کچن / برتن (Kitchen)</option>
-        <option value="medical">میڈیکل سامان (Medical)</option>
-        <option value="beauty">بیوٹی کریم (Beauty)</option>
-        <option value="jewelry">جیولری سامان (Jewelry)</option>
+        <option value="kids">بچوں کے کپڑے</option>
+        <option value="watch">گھڑی</option>
+        <option value="mobile">موبائل فون</option>
+        <option value="laptop">لیپ ٹاپ</option>
+        <option value="electronics">الیکٹرانکس</option>
+        <option value="keyboard">کی بورڈ</option>
+        <option value="shoes">شوز</option>
+        <option value="kitchen">کچن / برتن</option>
+        <option value="medical">میڈیکل سامان</option>
+        <option value="beauty">بیوٹی کریم</option>
+        <option value="jewelry">جیولری سامان</option>
       </select>
-    </div>
-
-    <div class="form-group">
-      <label>تفصیل/ڈسکرپشن (Description):</label>
-      <textarea id="pDesc" rows="2" placeholder="پروڈکٹ کی کچھ تفصیل درج کریں..."></textarea>
     </div>
 
     <div class="form-group">
@@ -105,7 +99,8 @@
     <button class="add-btn" onclick="addNewProduct()">پروڈکٹ شائع کریں 🚀</button>
   </div>
 
-  <div class="items-list-box" id="adminItemsList"></div>
+  <div class="items-list-box" id="pendingItemsList"></div>
+  <div class="items-list-box" id="adminItemsList" style="margin-top:20px;"></div>
 
   <script>
     const firebaseConfig = {
@@ -120,24 +115,36 @@
     };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database().ref("products");
+    const pendingDb = firebase.database().ref("pending_products");
+    const settingsDb = firebase.database().ref("settings");
 
     const IMGBB_API_KEY = "66dcdf21e30733bfd85545d9fb5e76c4";
     let selectedFiles = [];
 
     window.onload = function() {
+      // Load Existing Tag
+      settingsDb.child("admin_tag").once('value', snap => {
+        if(snap.exists()) document.getElementById('adminTagInput').value = snap.val();
+      });
+      renderPendingList();
       renderAdminList();
     };
+
+    function saveAdminTag() {
+      const tag = document.getElementById('adminTagInput').value.trim();
+      if(!tag) { alert("براہ کرم اپنا Tracking Tag درج کریں!"); return; }
+      settingsDb.child("admin_tag").set(tag).then(() => {
+        alert("آپ کا Tracking Tag کامیابی سے محفوظ ہو گیا ہے! 🚀");
+      });
+    }
 
     function autoParseText() {
       const raw = document.getElementById('smartPastedText').value;
       if (!raw) return;
-
       const urlMatch = raw.match(/(https?:\/\/[^\s]+)/g);
       if (urlMatch) document.getElementById('pLink').value = urlMatch[0];
-
       const priceMatch = raw.match(/(SAR\s?[\d\.]+)/i) || raw.match(/(SAR\s?[\d,]+)/i);
       if (priceMatch) document.getElementById('pPrice').value = priceMatch[0];
-
       let cleanTitle = raw.replace(/(https?:\/\/[^\s]+)/g, '').replace(/Price Now:?/i, '').replace(/SAR\s?[\d\.]+/g, '').replace(/Click & Buy:?/i, '').trim();
       if (cleanTitle) document.getElementById('pTitle').value = cleanTitle.substring(0, 80);
     }
@@ -163,16 +170,49 @@
       }
     }
 
+    function renderPendingList() {
+      const container = document.getElementById('pendingItemsList');
+      pendingDb.on('value', (snapshot) => {
+        const data = snapshot.val();
+        if(!data) { container.innerHTML = ''; return; }
+
+        container.innerHTML = '<h3 style="font-size:13px; color:#e11d48; margin-bottom:8px;">⏳ صارفین کی بھیجی گئی پینڈنگ پروڈکٹس:</h3>';
+        Object.keys(data).reverse().forEach((key) => {
+          const item = data[key];
+          container.innerHTML += `
+            <div class="item-row">
+              <span class="item-title">${item.title}</span>
+              <div>
+                <button class="approve-btn" onclick="approveProduct('${key}')">✅ منظور کریں</button>
+                <button class="del-btn" onclick="rejectProduct('${key}')">🗑️ منسوخ</button>
+              </div>
+            </div>
+          `;
+        });
+      });
+    }
+
+    function approveProduct(key) {
+      pendingDb.child(key).once('value', (snapshot) => {
+        const item = snapshot.val();
+        if(item) {
+          db.push(item).then(() => {
+            pendingDb.child(key).remove();
+            alert("پروڈکٹ منظور ہو کر پبلک ایپ پر لائیو کر دی گئی ہے!");
+          });
+        }
+      });
+    }
+
+    function rejectProduct(key) { pendingDb.child(key).remove(); }
+
     function renderAdminList() {
       const container = document.getElementById('adminItemsList');
       db.on('value', (snapshot) => {
         const data = snapshot.val();
-        if(!data) {
-          container.innerHTML = '<p style="text-align:center; color:#94a3b8; font-size:12px;">کوئی پروڈکٹ موجود نہیں ہے۔</p>';
-          return;
-        }
+        if(!data) { container.innerHTML = '<p style="text-align:center; color:#94a3b8; font-size:12px;">کوئی پروڈکٹ موجود نہیں ہے۔</p>'; return; }
 
-        container.innerHTML = '<h3 style="font-size:13px; margin-bottom:8px;">موجودہ پروڈکٹس:</h3>';
+        container.innerHTML = '<h3 style="font-size:13px; margin-bottom:8px;">موجودہ لائیو پروڈکٹس:</h3>';
         Object.keys(data).reverse().forEach((key) => {
           const item = data[key];
           container.innerHTML += `
@@ -188,75 +228,46 @@
     async function addNewProduct() {
       const title = document.getElementById('pTitle').value.trim();
       const category = document.getElementById('pCategory').value;
-      const desc = document.getElementById('pDesc').value.trim();
       const price = document.getElementById('pPrice').value.trim();
       const link = document.getElementById('pLink').value.trim();
       const loader = document.getElementById('loader');
 
-      if (!title || !link) {
-        alert("براہ کرم عنوان اور افیلی ایٹ لنک درج کریں!");
-        return;
-      }
+      if (!title || !link) { alert("براہ کرم عنوان اور افیلی ایٹ لنک درج کریں!"); return; }
 
       let uploadedImageUrls = [];
-
       if (selectedFiles.length > 0) {
         loader.style.display = "block";
-        
         for (let file of selectedFiles) {
           const formData = new FormData();
           formData.append("image", file);
-
           try {
-            const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, {
-              method: "POST",
-              body: formData
-            });
+            const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, { method: "POST", body: formData });
             const imgData = await res.json();
-            if (imgData.success) {
-              uploadedImageUrls.push(imgData.data.url);
-            }
-          } catch (e) {
-            console.error("تصویر اپلوڈ کا مسئلہ:", e);
-          }
+            if (imgData.success) uploadedImageUrls.push(imgData.data.url);
+          } catch (e){}
         }
         loader.style.display = "none";
       }
 
-      if (uploadedImageUrls.length === 0) {
-        uploadedImageUrls.push("https://via.placeholder.com/150");
-      }
+      if (uploadedImageUrls.length === 0) uploadedImageUrls.push("https://via.placeholder.com/150");
 
       db.push({
-        title: title,
-        category: category,
-        desc: desc || "",
-        images: uploadedImageUrls,
-        img: uploadedImageUrls[0],
-        price: price || "Best Price",
-        link: link,
-        timestamp: Date.now()
+        title: title, category: category, images: uploadedImageUrls, img: uploadedImageUrls[0], price: price || "Best Price", link: link, timestamp: Date.now()
       }).then(() => {
         document.getElementById('smartPastedText').value = '';
         document.getElementById('pTitle').value = '';
-        document.getElementById('pDesc').value = '';
         document.getElementById('pPrice').value = '';
         document.getElementById('pLink').value = '';
         document.getElementById('imgFileInput').value = '';
         document.getElementById('previewContainer').innerHTML = '';
         document.getElementById('fileStatusText').innerText = "📁 گیلری سے تصاویر منتخب کرنے کے لیے یہاں کلک کریں";
         selectedFiles = [];
-
-        alert("پروڈکٹ کامیابی سے شامل کر دی گئی ہے!");
-      }).catch((err) => {
-        alert("ڈیٹا بیس غلطی: " + err.message);
+        alert("پروڈکٹ کامیابی سے لائیو شامل کر دی گئی ہے!");
       });
     }
 
     function deleteProduct(key) {
-      if (confirm("کیا آپ واقعی یہ پروڈکٹ ڈلیٹ کرنا چاہتے ہیں؟")) {
-        db.child(key).remove();
-      }
+      if (confirm("کیا آپ واقعی یہ پروڈکٹ ڈلیٹ کرنا چاہتے ہیں؟")) db.child(key).remove();
     }
   </script>
 </body>
