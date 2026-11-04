@@ -4,37 +4,31 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title id="pageTitle">سعودی بیسٹ ڈیلز & ڈسکاؤنٹس</title>
-  <!-- Firebase SDK Links -->
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; -webkit-tap-highlight-color: transparent; }
     body { background-color: #f5f5f5; color: #222222; padding: 8px; padding-bottom: 30px; }
 
-    /* Flag Language Switcher Bar */
     .lang-bar { display: flex; justify-content: space-around; gap: 4px; margin-bottom: 10px; background: #ffffff; padding: 6px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
     .lang-btn { flex: 1; background: #f1f5f9; border: 1px solid #cbd5e1; padding: 8px 4px; border-radius: 8px; font-size: 11px; font-weight: bold; cursor: pointer; color: #334155; display: flex; align-items: center; justify-content: center; gap: 4px; }
     .lang-btn.active { background: #ff4747; color: #ffffff; border-color: #ff4747; }
 
-    /* Header & Action Bar */
     .header { background: linear-gradient(135deg, #ff4747 0%, #e60000 100%); color: #ffffff; text-align: center; padding: 12px; border-radius: 12px; font-weight: bold; font-size: 16px; margin-bottom: 10px; box-shadow: 0 4px 10px rgba(255, 71, 71, 0.25); }
     
     .user-upload-btn {
       width: 100%; background: #2563eb; color: #ffffff; border: none; padding: 10px; border-radius: 10px; font-weight: bold; font-size: 13px; margin-bottom: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 3px 8px rgba(37, 99, 235, 0.25);
     }
 
-    /* Category Scroll Bar */
     .category-scroll { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 10px; scrollbar-width: none; }
     .category-scroll::-webkit-scrollbar { display: none; }
     .cat-btn { white-space: nowrap; background: #ffffff; border: 1px solid #e2e8f0; padding: 7px 14px; border-radius: 20px; font-size: 11px; font-weight: bold; color: #475569; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.03); }
     .cat-btn.active { background: #ff4747; color: #ffffff; border-color: #ff4747; }
 
-    /* Slim Banner Strip Style (320x50) */
     .adsterra-slim-banner { 
       background: #ffffff; border-radius: 8px; padding: 4px; text-align: center; margin-bottom: 10px; display: flex; justify-content: center; align-items: center; min-height: 55px; overflow: hidden; border: 1px dashed #cbd5e1;
     }
 
-    /* Product Grid Layout */
     .products-container { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; width: 100%; }
     .product-card { background: #ffffff; border-radius: 12px; padding: 8px; border: 1px solid #f0f0f0; box-shadow: 0 2px 8px rgba(0,0,0,0.04); display: flex; flex-direction: column; justify-content: space-between; width: 100%; overflow: hidden; }
     
@@ -50,7 +44,6 @@
     .product-price { font-size: 14px; font-weight: 800; color: #ff4747; margin-bottom: 8px; }
     .buy-btn { display: block; background: linear-gradient(135deg, #ff4747 0%, #e60000 100%); color: #ffffff; text-decoration: none; text-align: center; padding: 8px 4px; border-radius: 20px; font-weight: bold; font-size: 12px; box-shadow: 0 2px 6px rgba(255, 71, 71, 0.25); }
 
-    /* Modal Form Styling for User Upload */
     .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: none; justify-content: center; align-items: center; z-index: 1000; padding: 15px; }
     .modal-box { background: #ffffff; width: 100%; max-width: 420px; border-radius: 14px; padding: 18px; max-height: 90vh; overflow-y: auto; text-align: right; position: relative; }
     .close-modal { position: absolute; left: 15px; top: 12px; background: #e2e8f0; border: none; font-size: 16px; border-radius: 50%; width: 28px; height: 28px; cursor: pointer; font-weight: bold; }
@@ -62,7 +55,6 @@
 </head>
 <body>
 
-  <!-- Flag Language Bar -->
   <div class="lang-bar">
     <button class="lang-btn active" id="btnUr" onclick="switchLanguage('ur')">🇵🇰 اردو</button>
     <button class="lang-btn" id="btnEn" onclick="switchLanguage('en')">🇺🇸 English</button>
@@ -76,10 +68,8 @@
     <span>➕ اپنی ڈیلز/پروڈکٹ شائع کریں</span>
   </button>
 
-  <!-- Category Selection Bar -->
   <div class="category-scroll" id="categoryBar"></div>
 
-  <!-- Top Slim Adsterra Banner (320x50) -->
   <div class="adsterra-slim-banner">
     <script>
       atOptions = {
@@ -95,7 +85,6 @@
 
   <div class="products-container" id="productsGrid"></div>
 
-  <!-- Bottom Slim Adsterra Banner (320x50) -->
   <div class="adsterra-slim-banner" style="margin-top: 16px;">
     <script>
       atOptions = {
@@ -109,7 +98,6 @@
     <script src="https://bauval.org/22/cf3494f4a6b7bb56bec2bab7b59f7f36"></script>
   </div>
 
-  <!-- User Upload Modal Box -->
   <div class="modal-overlay" id="uploadModal">
     <div class="modal-box">
       <button class="close-modal" onclick="closeUploadModal()">✕</button>
@@ -174,7 +162,6 @@
     let adminTrackingTag = ""; 
     const sliderIndices = {};
 
-    // Load Admin Tag
     settingsDb.child("admin_tag").on('value', snap => {
       if(snap.exists()) adminTrackingTag = snap.val();
     });
@@ -213,23 +200,27 @@
       const link = document.getElementById('uLink').value.trim();
       const loader = document.getElementById('uLoader');
 
-      if (!title || !link) { alert("عنوان اور لنک درج کرنا ضروری ہے!"); return; }
+      if (!title || !link) { alert("براہ کرم عنوان اور افیلی ایٹ لنک درج کریں!"); return; }
+      if (userFiles.length === 0) { alert("براہ کرم کم از کم ایک پروڈکٹ کی تصویر اپلوڈ کریں!"); return; }
 
       loader.style.display = "block";
       let imgUrls = [];
 
-      if (userFiles.length > 0) {
-        for (let file of userFiles) {
-          const formData = new FormData();
-          formData.append("image", file);
-          try {
-            const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, { method: "POST", body: formData });
-            const imgData = await res.json();
-            if (imgData.success) imgUrls.push(imgData.data.url);
-          } catch(e){}
-        }
+      for (let file of userFiles) {
+        const formData = new FormData();
+        formData.append("image", file);
+        try {
+          const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, { method: "POST", body: formData });
+          const imgData = await res.json();
+          if (imgData.success) imgUrls.push(imgData.data.url);
+        } catch(e){}
       }
-      if (imgUrls.length === 0) imgUrls.push("https://via.placeholder.com/150");
+
+      if (imgUrls.length === 0) {
+        loader.style.display = "none";
+        alert("تصویر اپلوڈ کرنے میں مسئلہ آیا ہے، صحیح تصویری فائل منتخب کریں!");
+        return;
+      }
 
       pendingDb.push({
         title: title, category: category, price: price || "Best Price", link: link, images: imgUrls, img: imgUrls[0], timestamp: Date.now()
@@ -280,7 +271,6 @@
       if (track) track.style.transform = `translateX(${sliderIndices[cardKey] * 100}%)`;
     }
 
-    // Auto Replace 5th Product Link with Admin Tracking Tag
     function getFinalLink(originalLink, itemIndex) {
       if ((itemIndex + 1) % 5 === 0 && adminTrackingTag) {
         if(originalLink.includes('?')) {
