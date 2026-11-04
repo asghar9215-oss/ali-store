@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ur" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ایڈمن پینل - نئی پروڈکٹ شامل کریں</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, sans-serif; }
+    body { background-color: #f8fafc; color: #0f172a; padding: 14px; padding-bottom: 50px; }
+    
+    .admin-card {
+      background: #ffffff;
+      border: 2px solid #2563eb;
+      border-radius: 12px;
+      padding: 16px;
+      max-width: 500px;
+      margin: 0 auto 20px auto;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+    .admin-card h2 { font-size: 16px; color: #2563eb; margin-bottom: 12px; text-align: center; }
+    .form-group { margin-bottom: 10px; text-align: right; }
+    .form-group label { font-size: 12px; font-weight: bold; color: #475569; display: block; margin-bottom: 4px; }
+    .form-input { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 13px; outline: none; }
+    .add-btn { width: 100%; background: #2563eb; color: #fff; border: none; padding: 12px; font-weight: bold; border-radius: 8px; cursor: pointer; font-size: 14px; margin-top: 8px; }
+
+    .items-list-box { max-width: 500px; margin: 0 auto; }
+    .item-row { background: #fff; border: 1px solid #e2e8f0; padding: 10px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+    .item-title { font-size: 12px; font-weight: bold; }
+    .del-btn { background: #ef4444; color: white; border: none; padding: 6px 10px; font-size: 11px; border-radius: 6px; cursor: pointer; }
+  </style>
+</head>
+<body>
+
+  <div class="admin-card">
+    <h2>⚡ ایڈمن اپلوڈ پینل (AliExpress)</h2>
+    
+    <div class="form-group">
+      <label>علی ایکسپریس کا کاپی شدہ پورا مواد پیسٹ کریں:</label>
+      <textarea id="smartPastedText" class="form-input" rows="3" placeholder="ایپ سے کاپی کیا ہوا پورا ٹیکسٹ یہاں پیسٹ کریں..." oninput="autoParseText()"></textarea>
+    </div>
+
+    <div class="form-group">
+      <label>پروڈکٹ کا عنوان (Title):</label>
+      <input type="text" id="pTitle" class="form-input" placeholder="عنوان خود بخود الگ ہوگا...">
+    </div>
+
+    <div class="form-group">
+      <label>قیمت (Price in SAR):</label>
+      <input type="text" id="pPrice" class="form-input" placeholder="SAR 0.00">
+    </div>
+
+    <div class="form-group">
+      <label>افیلی ایٹ لنک (Affiliate Link):</label>
+      <input type="text" id="pLink" class="form-input" placeholder="https://..." dir="ltr">
+    </div>
+
+    <div class="form-group">
+      <label>تصویر کا لنک (Image URL):</label>
+      <input type="text" id="pImg" class="form-input" placeholder="https://..." dir="ltr">
+    </div>
+
+    <button class="add-btn" onclick="addNewProduct()">پروڈکٹ شائع کریں 🚀</button>
+  </div>
+
+  <div class="items-list-box" id="adminItemsList">
+    <!-- اپلوڈ شدہ پروڈکٹس یہاں نظر آئیں گی -->
+  </div>
+
+  <script>
+    function autoParseText() {
+      const raw = document.getElementById('smartPastedText').value;
+      if (!raw) return;
+
+      const urlMatch = raw.match(/(https?:\/\/[^\s]+)/g);
+      if (urlMatch) document.getElementById('pLink').value = urlMatch[0];
+
+      const priceMatch = raw.match(/(SAR\s?[\d\.]+)/i) || raw.match(/(SAR\s?[\d,]+)/i);
+      if (priceMatch) document.getElementById('pPrice').value = priceMatch[0];
+
+      let cleanTitle = raw.replace(/(https?:\/\/[^\s]+)/g, '').replace(/Price Now:?/i, '').replace(/SAR\s?[\d\.]+/g, '').replace(/Click & Buy:?/i, '').trim();
+      if (cleanTitle) document.getElementById('pTitle').value = cleanTitle.substring(0, 80);
+    }
+
+    function renderAdminList() {
+      const container = document.getElementById('adminItemsList');
+      const productsList = JSON.parse(localStorage.getItem('my_ali_products')) || [];
+
+      if(productsList.length === 0) {
+        container.innerHTML = '<p style="text-align:center; color:#94a3b8; font-size:12px;">کوئی پروڈکٹ موجود نہیں ہے۔</p>';
+        return;
+      }
+
+      container.innerHTML = '<h3 style="font-size:13px; margin-bottom:8px;">موجودہ پروڈکٹس:</h3>';
+      productsList.forEach((item, index) => {
+        container.innerHTML += `
+          <div class="item-row">
+            <span class="item-title">${item.title}</span>
+            <button class="del-btn" onclick="deleteProduct(${index})">🗑️ ڈلیٹ</button>
+          </div>
+        `;
+      });
+    }
+
+    function addNewProduct() {
+      const title = document.getElementById('pTitle').value.trim();
+      const img = document.getElementById('pImg').value.trim();
+      const price = document.getElementById('pPrice').value.trim();
+      const link = document.getElementById('pLink').value.trim();
+
+      if (!title || !link) {
+        alert("براہ کرم عنوان اور لنک درج کریں!");
+        return;
+      }
+
+      let productsList = JSON.parse(localStorage.getItem('my_ali_products')) || [];
+      productsList.unshift({
+        title: title,
+        img: img || "https://via.placeholder.com/150",
+        price: price || "Best Price",
+        link: link
+      });
+
+      localStorage.setItem('my_ali_products', JSON.stringify(productsList));
+
+      document.getElementById('smartPastedText').value = '';
+      document.getElementById('pTitle').value = '';
+      document.getElementById('pImg').value = '';
+      document.getElementById('pPrice').value = '';
+      document.getElementById('pLink').value = '';
+
+      alert("پروڈکٹ کامیابی سے شامل کر دی گئی ہے!");
+      renderAdminList();
+    }
+
+    function deleteProduct(index) {
+      if (confirm("کیا آپ واقعی یہ پروڈکٹ ڈلیٹ کرنا چاہتے ہیں؟")) {
+        let productsList = JSON.parse(localStorage.getItem('my_ali_products')) || [];
+        productsList.splice(index, 1);
+        localStorage.setItem('my_ali_products', JSON.stringify(productsList));
+        renderAdminList();
+      }
+    }
+
+    window.onload = renderAdminList;
+  </script>
+</body>
+</html>
