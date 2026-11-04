@@ -11,46 +11,37 @@
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; -webkit-tap-highlight-color: transparent; }
     body { background-color: #f5f5f5; color: #222222; padding: 8px; padding-bottom: 30px; }
 
-    /* Video Style Flag Language Bar */
-    .lang-bar { display: flex; justify-content: space-around; gap: 4px; margin-bottom: 12px; background: #ffffff; padding: 6px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+    /* Flag Language Switcher Bar */
+    .lang-bar { display: flex; justify-content: space-around; gap: 4px; margin-bottom: 10px; background: #ffffff; padding: 6px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
     .lang-btn { flex: 1; background: #f1f5f9; border: 1px solid #cbd5e1; padding: 8px 4px; border-radius: 8px; font-size: 11px; font-weight: bold; cursor: pointer; color: #334155; display: flex; align-items: center; justify-content: center; gap: 4px; }
     .lang-btn.active { background: #ff4747; color: #ffffff; border-color: #ff4747; }
 
-    /* Header */
+    /* Header & Action Bar */
     .header { background: linear-gradient(135deg, #ff4747 0%, #e60000 100%); color: #ffffff; text-align: center; padding: 12px; border-radius: 12px; font-weight: bold; font-size: 16px; margin-bottom: 10px; box-shadow: 0 4px 10px rgba(255, 71, 71, 0.25); }
+    
+    .user-upload-btn {
+      width: 100%; background: #2563eb; color: #ffffff; border: none; padding: 10px; border-radius: 10px; font-weight: bold; font-size: 13px; margin-bottom: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 3px 8px rgba(37, 99, 235, 0.25);
+    }
 
     /* Category Scroll Bar */
-    .category-scroll {
-      display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 12px; scrollbar-width: none;
-    }
+    .category-scroll { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 10px; scrollbar-width: none; }
     .category-scroll::-webkit-scrollbar { display: none; }
-    .cat-btn {
-      white-space: nowrap; background: #ffffff; border: 1px solid #e2e8f0; padding: 7px 14px; border-radius: 20px; font-size: 11px; font-weight: bold; color: #475569; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.03);
-    }
+    .cat-btn { white-space: nowrap; background: #ffffff; border: 1px solid #e2e8f0; padding: 7px 14px; border-radius: 20px; font-size: 11px; font-weight: bold; color: #475569; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.03); }
     .cat-btn.active { background: #ff4747; color: #ffffff; border-color: #ff4747; }
 
-    /* Ad Banner */
-    .adsterra-container { 
-      background: #ffffff; border-radius: 10px; padding: 6px; text-align: center; margin-bottom: 12px; display: flex; justify-content: center; align-items: center; overflow: hidden; box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+    /* Slim Banner Strip Style (320x50) */
+    .adsterra-slim-banner { 
+      background: #ffffff; border-radius: 8px; padding: 4px; text-align: center; margin-bottom: 10px; display: flex; justify-content: center; align-items: center; min-height: 55px; overflow: hidden; border: 1px dashed #cbd5e1;
     }
 
-    /* Product Grid */
-    .products-container { 
-      display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; width: 100%;
-    }
+    /* Product Grid Layout */
+    .products-container { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; width: 100%; }
+    .product-card { background: #ffffff; border-radius: 12px; padding: 8px; border: 1px solid #f0f0f0; box-shadow: 0 2px 8px rgba(0,0,0,0.04); display: flex; flex-direction: column; justify-content: space-between; width: 100%; overflow: hidden; }
     
-    .product-card { 
-      background: #ffffff; border-radius: 12px; padding: 8px; border: 1px solid #f0f0f0; box-shadow: 0 2px 8px rgba(0,0,0,0.04); display: flex; flex-direction: column; justify-content: space-between; width: 100%; overflow: hidden;
-    }
-    
-    .slider-wrapper { 
-      position: relative; width: 100%; height: 155px; border-radius: 8px; overflow: hidden; margin-bottom: 8px; background: #fdfdfd; 
-    }
+    .slider-wrapper { position: relative; width: 100%; height: 155px; border-radius: 8px; overflow: hidden; margin-bottom: 8px; background: #fdfdfd; }
     .slider-track { display: flex; width: 100%; height: 100%; transition: transform 0.3s ease-in-out; }
     .product-media { width: 100%; min-width: 100%; max-width: 100%; height: 155px; object-fit: cover; border-radius: 8px; border: none; display: block; }
-    .slide-btn { 
-      position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.4); color: white; border: none; width: 24px; height: 24px; border-radius: 50%; font-size: 11px; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 5; 
-    }
+    .slide-btn { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.4); color: white; border: none; width: 24px; height: 24px; border-radius: 50%; font-size: 11px; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 5; }
     .slide-btn.left { left: 4px; }
     .slide-btn.right { right: 4px; }
 
@@ -59,14 +50,19 @@
     .product-price { font-size: 14px; font-weight: 800; color: #ff4747; margin-bottom: 8px; }
     .buy-btn { display: block; background: linear-gradient(135deg, #ff4747 0%, #e60000 100%); color: #ffffff; text-decoration: none; text-align: center; padding: 8px 4px; border-radius: 20px; font-weight: bold; font-size: 12px; box-shadow: 0 2px 6px rgba(255, 71, 71, 0.25); }
 
-    @media (max-width: 340px) {
-      .products-container { grid-template-columns: 1fr; }
-    }
+    /* Modal Form Styling for User Upload */
+    .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: none; justify-content: center; align-items: center; z-index: 1000; padding: 15px; }
+    .modal-box { background: #ffffff; width: 100%; max-width: 420px; border-radius: 14px; padding: 18px; max-height: 90vh; overflow-y: auto; text-align: right; position: relative; }
+    .close-modal { position: absolute; left: 15px; top: 12px; background: #e2e8f0; border: none; font-size: 16px; border-radius: 50%; width: 28px; height: 28px; cursor: pointer; font-weight: bold; }
+    .modal-input { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; margin-bottom: 10px; font-size: 13px; outline: none; }
+    .file-btn { border: 2px dashed #2563eb; background: #eff6ff; padding: 10px; text-align: center; border-radius: 8px; cursor: pointer; margin-bottom: 10px; font-size: 12px; }
+
+    @media (max-width: 340px) { .products-container { grid-template-columns: 1fr; } }
   </style>
 </head>
 <body>
 
-  <!-- Flag Language Switcher Bar -->
+  <!-- Flag Language Bar -->
   <div class="lang-bar">
     <button class="lang-btn active" id="btnUr" onclick="switchLanguage('ur')">🇵🇰 اردو</button>
     <button class="lang-btn" id="btnEn" onclick="switchLanguage('en')">🇺🇸 English</button>
@@ -76,37 +72,83 @@
 
   <div class="header" id="appHeader">🛍️ سعودی بیسٹ ڈیلز & ڈسکاؤنٹس</div>
 
+  <button class="user-upload-btn" onclick="openUploadModal()">
+    <span>➕ اپنی ڈیلز/پروڈکٹ شائع کریں</span>
+  </button>
+
   <!-- Category Selection Bar -->
   <div class="category-scroll" id="categoryBar"></div>
 
-  <!-- Adsterra Banner 300x250 -->
-  <div class="adsterra-container">
+  <!-- Top Slim Adsterra Banner (320x50) -->
+  <div class="adsterra-slim-banner">
     <script>
       atOptions = {
-        'key' : '6e9a3e4aac34744cc646c1689427d625',
+        'key' : 'cf3494f4a6b7bb56bec2bab7b59f7f36',
         'format' : 'iframe',
-        'height' : 250,
-        'width' : 300,
+        'height' : 50,
+        'width' : 320,
         'params' : {}
       };
     </script>
-    <script src="https://bauval.org/22/6e9a3e4aac34744cc646c1689427d625"></script>
+    <script src="https://bauval.org/22/cf3494f4a6b7bb56bec2bab7b59f7f36"></script>
   </div>
 
   <div class="products-container" id="productsGrid"></div>
 
-  <!-- Bottom Adsterra Banner 300x250 -->
-  <div class="adsterra-container" style="margin-top: 16px;">
+  <!-- Bottom Slim Adsterra Banner (320x50) -->
+  <div class="adsterra-slim-banner" style="margin-top: 16px;">
     <script>
       atOptions = {
-        'key' : '6e9a3e4aac34744cc646c1689427d625',
+        'key' : 'cf3494f4a6b7bb56bec2bab7b59f7f36',
         'format' : 'iframe',
-        'height' : 250,
-        'width' : 300,
+        'height' : 50,
+        'width' : 320,
         'params' : {}
       };
     </script>
-    <script src="https://bauval.org/22/6e9a3e4aac34744cc646c1689427d625"></script>
+    <script src="https://bauval.org/22/cf3494f4a6b7bb56bec2bab7b59f7f36"></script>
+  </div>
+
+  <!-- User Upload Modal Box -->
+  <div class="modal-overlay" id="uploadModal">
+    <div class="modal-box">
+      <button class="close-modal" onclick="closeUploadModal()">✕</button>
+      <h3 style="margin-bottom: 12px; color:#2563eb; text-align:center;">🚀 اپنی پروڈکٹ شامل کریں</h3>
+      
+      <label style="font-size:11px; font-weight:bold;">پروڈکٹ کا عنوان:</label>
+      <input type="text" id="uTitle" class="modal-input" placeholder="عنوان درج کریں...">
+
+      <label style="font-size:11px; font-weight:bold;">کیٹیگری:</label>
+      <select id="uCategory" class="modal-input">
+        <option value="kids">بچوں کے کپڑے</option>
+        <option value="watch">گھڑی</option>
+        <option value="mobile">موبائل فون</option>
+        <option value="laptop">لیپ ٹاپ</option>
+        <option value="electronics">الیکٹرانکس</option>
+        <option value="keyboard">کی بورڈ</option>
+        <option value="shoes">شوز</option>
+        <option value="kitchen">کچن کا سامان</option>
+        <option value="medical">میڈیکل سامان</option>
+        <option value="beauty">بیوٹی کریم</option>
+        <option value="jewelry">جیولری سامان</option>
+      </select>
+
+      <label style="font-size:11px; font-weight:bold;">قیمت:</label>
+      <input type="text" id="uPrice" class="modal-input" placeholder="SAR 0.00">
+
+      <label style="font-size:11px; font-weight:bold;">افیلی ایٹ لنک:</label>
+      <input type="text" id="uLink" class="modal-input" placeholder="https://..." dir="ltr">
+
+      <label style="font-size:11px; font-weight:bold;">تصاویر (گیلری سے منتخب کریں):</label>
+      <div class="file-btn" onclick="document.getElementById('uImgInput').click()">
+        <span id="uFileText">📁 گیلری سے تصاویر منتخب کریں</span>
+        <input type="file" id="uImgInput" accept="image/*" multiple style="display:none;" onchange="handleUserImages(event)">
+      </div>
+
+      <div id="uLoader" style="display:none; text-align:center; font-size:12px; color:#2563eb; font-weight:bold; margin-bottom:8px;">اپلوڈ ہو رہا ہے... ⏳</div>
+
+      <button style="width:100%; background:#2563eb; color:white; border:none; padding:12px; border-radius:8px; font-weight:bold; cursor:pointer;" onclick="submitUserProduct()">شائع کرنے کے لیے بھیجیں 📤</button>
+    </div>
   </div>
 
   <script>
@@ -122,10 +164,20 @@
     };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database().ref("products");
+    const pendingDb = firebase.database().ref("pending_products");
+    const settingsDb = firebase.database().ref("settings");
 
+    const IMGBB_API_KEY = "66dcdf21e30733bfd85545d9fb5e76c4";
+    let userFiles = [];
     let currentLang = 'ur';
     let currentCategory = 'all';
+    let adminTrackingTag = ""; 
     const sliderIndices = {};
+
+    // Load Admin Tag
+    settingsDb.child("admin_tag").on('value', snap => {
+      if(snap.exists()) adminTrackingTag = snap.val();
+    });
 
     const translations = {
       ur: { 
@@ -146,6 +198,48 @@
       }
     };
 
+    function openUploadModal() { document.getElementById('uploadModal').style.display = 'flex'; }
+    function closeUploadModal() { document.getElementById('uploadModal').style.display = 'none'; }
+
+    function handleUserImages(e) {
+      userFiles = Array.from(e.target.files);
+      if(userFiles.length > 0) document.getElementById('uFileText').innerText = `${userFiles.length} تصاویر منتخب ہو گئیں ✅`;
+    }
+
+    async function submitUserProduct() {
+      const title = document.getElementById('uTitle').value.trim();
+      const category = document.getElementById('uCategory').value;
+      const price = document.getElementById('uPrice').value.trim();
+      const link = document.getElementById('uLink').value.trim();
+      const loader = document.getElementById('uLoader');
+
+      if (!title || !link) { alert("عنوان اور لنک درج کرنا ضروری ہے!"); return; }
+
+      loader.style.display = "block";
+      let imgUrls = [];
+
+      if (userFiles.length > 0) {
+        for (let file of userFiles) {
+          const formData = new FormData();
+          formData.append("image", file);
+          try {
+            const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, { method: "POST", body: formData });
+            const imgData = await res.json();
+            if (imgData.success) imgUrls.push(imgData.data.url);
+          } catch(e){}
+        }
+      }
+      if (imgUrls.length === 0) imgUrls.push("https://via.placeholder.com/150");
+
+      pendingDb.push({
+        title: title, category: category, price: price || "Best Price", link: link, images: imgUrls, img: imgUrls[0], timestamp: Date.now()
+      }).then(() => {
+        loader.style.display = "none";
+        alert("آپ کی پروڈکٹ ایڈمن کو بھیج دی گئی ہے۔ ایڈمن کی منظوری کے بعد یہ لائیو شو ہو جائے گی! 🚀");
+        closeUploadModal();
+      });
+    }
+
     function switchLanguage(lang) {
       currentLang = lang;
       document.getElementById('htmlTag').setAttribute('dir', translations[lang].dir);
@@ -165,9 +259,7 @@
     function renderCategories() {
       const catBar = document.getElementById('categoryBar');
       catBar.innerHTML = '';
-      const catKeys = Object.keys(translations[currentLang].cats);
-      
-      catKeys.forEach(key => {
+      Object.keys(translations[currentLang].cats).forEach(key => {
         const activeClass = key === currentCategory ? 'active' : '';
         catBar.innerHTML += `<button class="cat-btn ${activeClass}" onclick="filterCategory('${key}')">${translations[currentLang].cats[key]}</button>`;
       });
@@ -182,52 +274,48 @@
     function moveSlide(cardKey, direction, totalImages) {
       if (!sliderIndices[cardKey]) sliderIndices[cardKey] = 0;
       sliderIndices[cardKey] += direction;
-
       if (sliderIndices[cardKey] < 0) sliderIndices[cardKey] = totalImages - 1;
       if (sliderIndices[cardKey] >= totalImages) sliderIndices[cardKey] = 0;
-
       const track = document.getElementById(`track-${cardKey}`);
-      if (track) {
-        track.style.transform = `translateX(${sliderIndices[cardKey] * 100}%)`;
+      if (track) track.style.transform = `translateX(${sliderIndices[cardKey] * 100}%)`;
+    }
+
+    // Auto Replace 5th Product Link with Admin Tracking Tag
+    function getFinalLink(originalLink, itemIndex) {
+      if ((itemIndex + 1) % 5 === 0 && adminTrackingTag) {
+        if(originalLink.includes('?')) {
+          return originalLink + "&aff_fcid=" + adminTrackingTag;
+        } else {
+          return originalLink + "?aff_fcid=" + adminTrackingTag;
+        }
       }
+      return originalLink;
     }
 
     function renderProducts() {
       const grid = document.getElementById('productsGrid');
-
       db.on('value', (snapshot) => {
         const data = snapshot.val();
-        if (!data) {
-          grid.innerHTML = `<p style="text-align: center; grid-column: span 2; padding: 20px; color: #64748b;">${translations[currentLang].emptyMsg}</p>`;
-          return;
-        }
+        if (!data) { grid.innerHTML = `<p style="text-align: center; grid-column: span 2; padding: 20px; color: #64748b;">${translations[currentLang].emptyMsg}</p>`; return; }
 
         grid.innerHTML = '';
         let count = 0;
-        Object.keys(data).reverse().forEach((key) => {
+        Object.keys(data).reverse().forEach((key, index) => {
           const item = data[key];
-          
-          if (currentCategory !== 'all' && item.category !== currentCategory) {
-            return;
-          }
+          if (currentCategory !== 'all' && item.category !== currentCategory) return;
           count++;
 
+          const finalBuyLink = getFinalLink(item.link, count - 1);
           const imgList = item.images && item.images.length > 0 ? item.images : [item.img || 'https://via.placeholder.com/150'];
-          
-          let sliderHtml = '';
-          if (imgList.length > 1) {
-            sliderHtml = `
-              <div class="slider-wrapper">
-                <button class="slide-btn right" onclick="moveSlide('${key}', 1, ${imgList.length})">❯</button>
-                <div class="slider-track" id="track-${key}">
-                  ${imgList.map(src => `<img src="${src}" class="product-media" onerror="this.src='https://via.placeholder.com/150'">`).join('')}
-                </div>
-                <button class="slide-btn left" onclick="moveSlide('${key}', -1, ${imgList.length})">❮</button>
+          let sliderHtml = imgList.length > 1 ? `
+            <div class="slider-wrapper">
+              <button class="slide-btn right" onclick="moveSlide('${key}', 1, ${imgList.length})">❯</button>
+              <div class="slider-track" id="track-${key}">
+                ${imgList.map(src => `<img src="${src}" class="product-media" onerror="this.src='https://via.placeholder.com/150'">`).join('')}
               </div>
-            `;
-          } else {
-            sliderHtml = `<div class="slider-wrapper"><img src="${imgList[0]}" class="product-media" onerror="this.src='https://via.placeholder.com/150'"></div>`;
-          }
+              <button class="slide-btn left" onclick="moveSlide('${key}', -1, ${imgList.length})">❮</button>
+            </div>
+          ` : `<div class="slider-wrapper"><img src="${imgList[0]}" class="product-media" onerror="this.src='https://via.placeholder.com/150'"></div>`;
 
           grid.innerHTML += `
             <div class="product-card">
@@ -237,21 +325,16 @@
                 ${item.desc ? `<div class="product-desc">${item.desc}</div>` : ''}
                 <div class="product-price">${item.price}</div>
               </div>
-              <a href="${item.link}" target="_blank" class="buy-btn">${translations[currentLang].buyBtn}</a>
+              <a href="${finalBuyLink}" target="_blank" class="buy-btn">${translations[currentLang].buyBtn}</a>
             </div>
           `;
         });
 
-        if (count === 0) {
-          grid.innerHTML = `<p style="text-align: center; grid-column: span 2; padding: 20px; color: #64748b;">${translations[currentLang].emptyMsg}</p>`;
-        }
+        if (count === 0) grid.innerHTML = `<p style="text-align: center; grid-column: span 2; padding: 20px; color: #64748b;">${translations[currentLang].emptyMsg}</p>`;
       });
     }
 
-    window.onload = function() {
-      renderCategories();
-      renderProducts();
-    };
+    window.onload = function() { renderCategories(); renderProducts(); };
   </script>
 </body>
 </html>
