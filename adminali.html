@@ -26,7 +26,9 @@
     .add-btn { width: 100%; background: #2563eb; color: #fff; border: none; padding: 14px; font-weight: bold; border-radius: 8px; cursor: pointer; font-size: 15px; margin-top: 10px; }
 
     .items-list-box { max-width: 500px; margin: 0 auto; }
-    .item-row { background: #fff; border: 1px solid #e2e8f0; padding: 10px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+    .item-row { background: #fff; border: 1px solid #e2e8f0; padding: 10px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; gap: 8px; }
+    .item-info { display: flex; align-items: center; gap: 10px; }
+    .item-thumb { width: 45px; height: 45px; object-fit: cover; border-radius: 6px; border: 1px solid #cbd5e1; }
     .item-title { font-size: 12px; font-weight: bold; color: #1e293b; }
     .approve-btn { background: #22c55e; color: white; border: none; padding: 6px 10px; font-size: 11px; border-radius: 6px; cursor: pointer; margin-left: 4px; }
     .del-btn { background: #ef4444; color: white; border: none; padding: 6px 10px; font-size: 11px; border-radius: 6px; cursor: pointer; }
@@ -35,12 +37,12 @@
 </head>
 <body>
 
-  <!-- Admin Settings Box for Tracking Tag -->
+  <!-- Tracking Tag Box -->
   <div class="admin-card" style="border-color: #16a34a;">
     <h2 style="color: #16a34a;">⚙️ اپنا علی ایکسپریس Tracking Tag سیٹ کریں</h2>
     <div class="form-group">
       <label>آپ کا Tracking ID / Tag:</label>
-      <input type="text" id="adminTagInput" placeholder="مثال: my_ali_store_2024" dir="ltr">
+      <input type="text" id="adminTagInput" placeholder="مثال: Afumawater9" dir="ltr">
     </div>
     <button class="add-btn" style="background: #16a34a;" onclick="saveAdminTag()">ٹیگ محفوظ کریں 💾</button>
   </div>
@@ -122,7 +124,6 @@
     let selectedFiles = [];
 
     window.onload = function() {
-      // Load Existing Tag
       settingsDb.child("admin_tag").once('value', snap => {
         if(snap.exists()) document.getElementById('adminTagInput').value = snap.val();
       });
@@ -179,9 +180,17 @@
         container.innerHTML = '<h3 style="font-size:13px; color:#e11d48; margin-bottom:8px;">⏳ صارفین کی بھیجی گئی پینڈنگ پروڈکٹس:</h3>';
         Object.keys(data).reverse().forEach((key) => {
           const item = data[key];
+          const imgUrl = (item.images && item.images.length > 0) ? item.images[0] : (item.img || 'https://via.placeholder.com/150');
+          
           container.innerHTML += `
             <div class="item-row">
-              <span class="item-title">${item.title}</span>
+              <div class="item-info">
+                <img src="${imgUrl}" class="item-thumb" onerror="this.src='https://via.placeholder.com/150'">
+                <div>
+                  <div class="item-title">${item.title}</div>
+                  <div style="font-size:10px; color:#64748b;">${item.price || ''}</div>
+                </div>
+              </div>
               <div>
                 <button class="approve-btn" onclick="approveProduct('${key}')">✅ منظور کریں</button>
                 <button class="del-btn" onclick="rejectProduct('${key}')">🗑️ منسوخ</button>
@@ -215,9 +224,14 @@
         container.innerHTML = '<h3 style="font-size:13px; margin-bottom:8px;">موجودہ لائیو پروڈکٹس:</h3>';
         Object.keys(data).reverse().forEach((key) => {
           const item = data[key];
+          const imgUrl = (item.images && item.images.length > 0) ? item.images[0] : (item.img || 'https://via.placeholder.com/150');
+
           container.innerHTML += `
             <div class="item-row">
-              <span class="item-title">${item.title}</span>
+              <div class="item-info">
+                <img src="${imgUrl}" class="item-thumb" onerror="this.src='https://via.placeholder.com/150'">
+                <span class="item-title">${item.title}</span>
+              </div>
               <button class="del-btn" onclick="deleteProduct('${key}')">🗑️ ڈلیٹ</button>
             </div>
           `;
@@ -233,23 +247,22 @@
       const loader = document.getElementById('loader');
 
       if (!title || !link) { alert("براہ کرم عنوان اور افیلی ایٹ لنک درج کریں!"); return; }
+      if (selectedFiles.length === 0) { alert("براہ کرم کم از کم ایک تصویر منتخب کریں!"); return; }
 
       let uploadedImageUrls = [];
-      if (selectedFiles.length > 0) {
-        loader.style.display = "block";
-        for (let file of selectedFiles) {
-          const formData = new FormData();
-          formData.append("image", file);
-          try {
-            const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, { method: "POST", body: formData });
-            const imgData = await res.json();
-            if (imgData.success) uploadedImageUrls.push(imgData.data.url);
-          } catch (e){}
-        }
-        loader.style.display = "none";
+      loader.style.display = "block";
+      for (let file of selectedFiles) {
+        const formData = new FormData();
+        formData.append("image", file);
+        try {
+          const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, { method: "POST", body: formData });
+          const imgData = await res.json();
+          if (imgData.success) uploadedImageUrls.push(imgData.data.url);
+        } catch (e){}
       }
+      loader.style.display = "none";
 
-      if (uploadedImageUrls.length === 0) uploadedImageUrls.push("https://via.placeholder.com/150");
+      if (uploadedImageUrls.length === 0) { alert("تصویر اپلوڈ کرنے میں مسئلہ آیا ہے، دوبارہ کوشش کریں!"); return; }
 
       db.push({
         title: title, category: category, images: uploadedImageUrls, img: uploadedImageUrls[0], price: price || "Best Price", link: link, timestamp: Date.now()
