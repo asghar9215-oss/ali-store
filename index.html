@@ -8,90 +8,57 @@
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
-    body { background-color: #f1f5f9; color: #0f172a; padding: 10px; padding-bottom: 50px; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; -webkit-tap-highlight-color: transparent; }
+    body { background-color: #f5f5f5; color: #222222; padding: 8px; padding-bottom: 30px; }
 
-    .lang-bar { display: flex; justify-content: center; gap: 8px; margin-bottom: 10px; }
-    .lang-btn { background: #ffffff; border: 1px solid #cbd5e1; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; cursor: pointer; color: #334155; }
-    .lang-btn.active { background: #e11d48; color: #ffffff; border-color: #e11d48; }
+    /* Video Style Flag Language Bar */
+    .lang-bar { display: flex; justify-content: space-around; gap: 4px; margin-bottom: 12px; background: #ffffff; padding: 6px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+    .lang-btn { flex: 1; background: #f1f5f9; border: 1px solid #cbd5e1; padding: 8px 4px; border-radius: 8px; font-size: 11px; font-weight: bold; cursor: pointer; color: #334155; display: flex; align-items: center; justify-content: center; gap: 4px; }
+    .lang-btn.active { background: #ff4747; color: #ffffff; border-color: #ff4747; }
 
-    .header { background: #e11d48; color: #ffffff; text-align: center; padding: 14px; border-radius: 12px; font-weight: bold; font-size: 18px; margin-bottom: 12px; box-shadow: 0 4px 10px rgba(225, 29, 72, 0.2); }
+    /* Header */
+    .header { background: linear-gradient(135deg, #ff4747 0%, #e60000 100%); color: #ffffff; text-align: center; padding: 12px; border-radius: 12px; font-weight: bold; font-size: 16px; margin-bottom: 10px; box-shadow: 0 4px 10px rgba(255, 71, 71, 0.25); }
 
-    .adsterra-banner { background: #ffffff; border: 1px dashed #cbd5e1; border-radius: 10px; padding: 8px; text-align: center; margin-bottom: 12px; min-height: 60px; display: flex; justify-content: center; align-items: center; overflow: hidden; }
+    /* Category Scroll Bar */
+    .category-scroll {
+      display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 12px; scrollbar-width: none;
+    }
+    .category-scroll::-webkit-scrollbar { display: none; }
+    .cat-btn {
+      white-space: nowrap; background: #ffffff; border: 1px solid #e2e8f0; padding: 7px 14px; border-radius: 20px; font-size: 11px; font-weight: bold; color: #475569; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+    }
+    .cat-btn.active { background: #ff4747; color: #ffffff; border-color: #ff4747; }
 
-    /* Mobile Responsive Grid Fix */
+    /* Ad Banner */
+    .adsterra-container { 
+      background: #ffffff; border-radius: 10px; padding: 6px; text-align: center; margin-bottom: 12px; display: flex; justify-content: center; align-items: center; overflow: hidden; box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+    }
+
+    /* Product Grid */
     .products-container { 
-      display: grid; 
-      grid-template-columns: repeat(2, minmax(0, 1fr)); 
-      gap: 10px; 
-      width: 100%;
+      display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; width: 100%;
     }
     
     .product-card { 
-      background: #ffffff; 
-      border-radius: 12px; 
-      padding: 8px; 
-      border: 1px solid #e2e8f0; 
-      box-shadow: 0 2px 8px rgba(0,0,0,0.05); 
-      display: flex; 
-      flex-direction: column; 
-      justify-content: space-between; 
-      width: 100%;
-      overflow: hidden;
+      background: #ffffff; border-radius: 12px; padding: 8px; border: 1px solid #f0f0f0; box-shadow: 0 2px 8px rgba(0,0,0,0.04); display: flex; flex-direction: column; justify-content: space-between; width: 100%; overflow: hidden;
     }
     
-    /* Fixed Slider Carousel Styles for Mobile */
     .slider-wrapper { 
-      position: relative; 
-      width: 100%; 
-      height: 150px; 
-      border-radius: 8px; 
-      overflow: hidden; 
-      margin-bottom: 8px; 
-      background: #f8fafc; 
+      position: relative; width: 100%; height: 155px; border-radius: 8px; overflow: hidden; margin-bottom: 8px; background: #fdfdfd; 
     }
-    .slider-track { 
-      display: flex; 
-      width: 100%; 
-      height: 100%; 
-      transition: transform 0.3s ease-in-out; 
-    }
-    .product-media { 
-      width: 100%; 
-      min-width: 100%;
-      max-width: 100%;
-      height: 150px; 
-      object-fit: cover; 
-      border-radius: 8px;
-      border: none; 
-      display: block;
-    }
+    .slider-track { display: flex; width: 100%; height: 100%; transition: transform 0.3s ease-in-out; }
+    .product-media { width: 100%; min-width: 100%; max-width: 100%; height: 155px; object-fit: cover; border-radius: 8px; border: none; display: block; }
     .slide-btn { 
-      position: absolute; 
-      top: 50%; 
-      transform: translateY(-50%); 
-      background: rgba(0,0,0,0.5); 
-      color: white; 
-      border: none; 
-      width: 24px; 
-      height: 24px; 
-      border-radius: 50%; 
-      font-size: 11px; 
-      cursor: pointer; 
-      display: flex; 
-      align-items: center; 
-      justify-content: center; 
-      z-index: 5; 
+      position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.4); color: white; border: none; width: 24px; height: 24px; border-radius: 50%; font-size: 11px; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 5; 
     }
     .slide-btn.left { left: 4px; }
     .slide-btn.right { right: 4px; }
 
-    .product-title { font-size: 11px; font-weight: bold; color: #1e293b; margin-bottom: 4px; line-height: 1.3; height: 30px; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
-    .product-desc { font-size: 10px; color: #64748b; margin-bottom: 6px; line-height: 1.2; height: 24px; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
-    .product-price { font-size: 13px; font-weight: 800; color: #e11d48; margin-bottom: 8px; }
-    .buy-btn { display: block; background: #2563eb; color: #ffffff; text-decoration: none; text-align: center; padding: 8px 4px; border-radius: 6px; font-weight: bold; font-size: 11px; }
+    .product-title { font-size: 12px; font-weight: 600; color: #222222; margin-bottom: 4px; line-height: 1.3; height: 32px; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+    .product-desc { font-size: 10px; color: #666666; margin-bottom: 6px; line-height: 1.2; height: 24px; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+    .product-price { font-size: 14px; font-weight: 800; color: #ff4747; margin-bottom: 8px; }
+    .buy-btn { display: block; background: linear-gradient(135deg, #ff4747 0%, #e60000 100%); color: #ffffff; text-decoration: none; text-align: center; padding: 8px 4px; border-radius: 20px; font-weight: bold; font-size: 12px; box-shadow: 0 2px 6px rgba(255, 71, 71, 0.25); }
 
-    /* Single column for small screens if needed */
     @media (max-width: 340px) {
       .products-container { grid-template-columns: 1fr; }
     }
@@ -99,28 +66,50 @@
 </head>
 <body>
 
+  <!-- Flag Language Switcher Bar -->
   <div class="lang-bar">
-    <button class="lang-btn active" id="btnUr" onclick="switchLanguage('ur')">اردو</button>
-    <button class="lang-btn" id="btnEn" onclick="switchLanguage('en')">English</button>
-    <button class="lang-btn" id="btnAr" onclick="switchLanguage('ar')">العربية</button>
+    <button class="lang-btn active" id="btnUr" onclick="switchLanguage('ur')">🇵🇰 اردو</button>
+    <button class="lang-btn" id="btnEn" onclick="switchLanguage('en')">🇺🇸 English</button>
+    <button class="lang-btn" id="btnAr" onclick="switchLanguage('ar')">🇸🇦 العربية</button>
+    <button class="lang-btn" id="btnHi" onclick="switchLanguage('hi')">🇮🇳 हिंदी</button>
   </div>
 
   <div class="header" id="appHeader">🛍️ سعودی بیسٹ ڈیلز & ڈسکاؤنٹس</div>
 
-  <!-- Adsterra Top Banner Place -->
-  <div class="adsterra-banner" id="topAdBanner">
-    <span style="color: #94a3b8; font-size: 11px;">[ Adsterra Top Banner Ad Here ]</span>
+  <!-- Category Selection Bar -->
+  <div class="category-scroll" id="categoryBar"></div>
+
+  <!-- Adsterra Banner 300x250 -->
+  <div class="adsterra-container">
+    <script>
+      atOptions = {
+        'key' : '6e9a3e4aac34744cc646c1689427d625',
+        'format' : 'iframe',
+        'height' : 250,
+        'width' : 300,
+        'params' : {}
+      };
+    </script>
+    <script src="https://bauval.org/22/6e9a3e4aac34744cc646c1689427d625"></script>
   </div>
 
   <div class="products-container" id="productsGrid"></div>
 
-  <!-- Adsterra Bottom Banner Place -->
-  <div class="adsterra-banner" id="bottomAdBanner" style="margin-top: 16px;">
-    <span style="color: #94a3b8; font-size: 11px;">[ Adsterra Bottom Banner Ad Here ]</span>
+  <!-- Bottom Adsterra Banner 300x250 -->
+  <div class="adsterra-container" style="margin-top: 16px;">
+    <script>
+      atOptions = {
+        'key' : '6e9a3e4aac34744cc646c1689427d625',
+        'format' : 'iframe',
+        'height' : 250,
+        'width' : 300,
+        'params' : {}
+      };
+    </script>
+    <script src="https://bauval.org/22/6e9a3e4aac34744cc646c1689427d625"></script>
   </div>
 
   <script>
-    // Firebase Configuration
     const firebaseConfig = {
       apiKey: "AIzaSyDp--gVk61VaLCK-4yygwN8Oj9CpDIp05E",
       authDomain: "kist-65357.firebaseapp.com",
@@ -135,12 +124,26 @@
     const db = firebase.database().ref("products");
 
     let currentLang = 'ur';
+    let currentCategory = 'all';
     const sliderIndices = {};
 
     const translations = {
-      ur: { title: "🛍️ سعودی بیسٹ ڈیلز & ڈسکاؤنٹس", buyBtn: "🛒 خریداری کریں", emptyMsg: "فی الحال کوئی پروڈکٹ موجود نہیں ہے۔", dir: "rtl" },
-      en: { title: "🛍️ Saudi Best Deals & Discounts", buyBtn: "🛒 Buy Now", emptyMsg: "No products available currently.", dir: "ltr" },
-      ar: { title: "🛍️ أفضل العروض والخصومات في السعودية", buyBtn: "🛒 اشتري الآن", emptyMsg: "لا توجد منتجات متاحة حالياً.", dir: "rtl" }
+      ur: { 
+        title: "🛍️ سعودی بیسٹ ڈیلز & ڈسکاؤنٹس", buyBtn: "🛒 خریداری کریں", emptyMsg: "کوئی پروڈکٹ موجود نہیں ہے۔", dir: "rtl",
+        cats: { all: "سب", kids: "بچوں کے کپڑے", watch: "گھڑی", mobile: "موبائل فون", laptop: "لیپ ٹاپ", electronics: "الیکٹرانکس", keyboard: "کی بورڈ", shoes: "شوز", kitchen: "کچن کا سامان", medical: "میڈیکل سامان", beauty: "بیوٹی کریم", jewelry: "جیولری سامان" }
+      },
+      en: { 
+        title: "🛍️ Saudi Best Deals & Discounts", buyBtn: "🛒 Buy Now", emptyMsg: "No products available.", dir: "ltr",
+        cats: { all: "All", kids: "Kids Clothes", watch: "Watches", mobile: "Mobiles", laptop: "Laptops", electronics: "Electronics", keyboard: "Keyboards", shoes: "Shoes", kitchen: "Kitchenware", medical: "Medical Items", beauty: "Beauty Creams", jewelry: "Jewelry" }
+      },
+      ar: { 
+        title: "🛍️ أفضل العروض والخصومات في السعودية", buyBtn: "🛒 اشتري الآن", emptyMsg: "لا توجد منتجات متاحة.", dir: "rtl",
+        cats: { all: "الكل", kids: "ملابس الأطفال", watch: "ساعات", mobile: "جوالات", laptop: "لابتوب", electronics: "إلكترونيات", keyboard: "لوحة مفاتيح", shoes: "أحذية", kitchen: "أدوات المطبخ", medical: "مستلزمات طبية", beauty: "كريمات التجميل", jewelry: "مجوهرات" }
+      },
+      hi: { 
+        title: "🛍️ सऊदी बेस्ट डील्स और डिस्काउंट्स", buyBtn: "🛒 खरीदें", emptyMsg: "कोई उत्पाद उपलब्ध नहीं है।", dir: "ltr",
+        cats: { all: "सब", kids: "बच्चों के कपड़े", watch: "घड़ी", mobile: "मोबाइल", laptop: "लैपटॉप", electronics: "इलेक्ट्रॉनिक्स", keyboard: "कीबोर्ड", shoes: "जूते", kitchen: "रसोई का सामान", medical: "मेडिकल सामान", beauty: "ब्यूटी क्रीम", jewelry: "ज्वेलरी सामान" }
+      }
     };
 
     function switchLanguage(lang) {
@@ -149,14 +152,30 @@
       document.getElementById('htmlTag').setAttribute('lang', lang);
       document.getElementById('appHeader').innerText = translations[lang].title;
 
-      document.getElementById('btnUr').classList.remove('active');
-      document.getElementById('btnEn').classList.remove('active');
-      document.getElementById('btnAr').classList.remove('active');
-
+      ['btnUr', 'btnEn', 'btnAr', 'btnHi'].forEach(btn => document.getElementById(btn).classList.remove('active'));
       if (lang === 'ur') document.getElementById('btnUr').classList.add('active');
       if (lang === 'en') document.getElementById('btnEn').classList.add('active');
       if (lang === 'ar') document.getElementById('btnAr').classList.add('active');
+      if (lang === 'hi') document.getElementById('btnHi').classList.add('active');
 
+      renderCategories();
+      renderProducts();
+    }
+
+    function renderCategories() {
+      const catBar = document.getElementById('categoryBar');
+      catBar.innerHTML = '';
+      const catKeys = Object.keys(translations[currentLang].cats);
+      
+      catKeys.forEach(key => {
+        const activeClass = key === currentCategory ? 'active' : '';
+        catBar.innerHTML += `<button class="cat-btn ${activeClass}" onclick="filterCategory('${key}')">${translations[currentLang].cats[key]}</button>`;
+      });
+    }
+
+    function filterCategory(catKey) {
+      currentCategory = catKey;
+      renderCategories();
       renderProducts();
     }
 
@@ -184,8 +203,15 @@
         }
 
         grid.innerHTML = '';
+        let count = 0;
         Object.keys(data).reverse().forEach((key) => {
           const item = data[key];
+          
+          if (currentCategory !== 'all' && item.category !== currentCategory) {
+            return;
+          }
+          count++;
+
           const imgList = item.images && item.images.length > 0 ? item.images : [item.img || 'https://via.placeholder.com/150'];
           
           let sliderHtml = '';
@@ -215,10 +241,17 @@
             </div>
           `;
         });
+
+        if (count === 0) {
+          grid.innerHTML = `<p style="text-align: center; grid-column: span 2; padding: 20px; color: #64748b;">${translations[currentLang].emptyMsg}</p>`;
+        }
       });
     }
 
-    window.onload = renderProducts;
+    window.onload = function() {
+      renderCategories();
+      renderProducts();
+    };
   </script>
 </body>
 </html>
