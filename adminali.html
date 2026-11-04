@@ -24,7 +24,11 @@
       border: 2px dashed #2563eb; background: #eff6ff; padding: 12px; text-align: center; border-radius: 8px; cursor: pointer;
     }
     .file-input-box input[type="file"] { display: none; }
-    .preview-img { max-width: 100%; max-height: 150px; border-radius: 6px; margin-top: 8px; display: none; margin-left: auto; margin-right: auto; }
+    
+    .preview-container {
+      display: flex; gap: 6px; overflow-x: auto; margin-top: 8px; padding-bottom: 4px; justify-content: center; flex-wrap: wrap;
+    }
+    .preview-img { width: 65px; height: 65px; object-fit: cover; border-radius: 6px; border: 1px solid #2563eb; }
 
     .add-btn { width: 100%; background: #2563eb; color: #fff; border: none; padding: 12px; font-weight: bold; border-radius: 8px; cursor: pointer; font-size: 14px; margin-top: 8px; }
 
@@ -74,17 +78,17 @@
       <input type="text" id="pLink" class="form-input" placeholder="https://..." dir="ltr">
     </div>
 
-    <!-- Gallery Image Upload Box -->
+    <!-- Gallery Multiple Images Box -->
     <div class="form-group">
-      <label>گیلری سے تصویر منتخب کریں:</label>
+      <label>گیلری سے (3 یا 4) تصاویر منتخب کریں:</label>
       <div class="file-input-box" onclick="document.getElementById('imgFileInput').click()">
-        <span id="fileStatusText">📁 گیلری سے تصویر منتخب کرنے کے لیے یہاں کلک کریں</span>
-        <input type="file" id="imgFileInput" accept="image/*" onchange="previewSelectedImage(event)">
-        <img id="previewImg" class="preview-img" alt="Preview">
+        <span id="fileStatusText">📁 گیلری سے تصاویر منتخب کرنے کے لیے یہاں کلک کریں</span>
+        <input type="file" id="imgFileInput" accept="image/*" multiple onchange="previewSelectedImages(event)">
+        <div id="previewContainer" class="preview-container"></div>
       </div>
     </div>
 
-    <div id="loader">تصویر اپلوڈ ہو رہی ہے، براہ کرم انتظار کریں... ⏳</div>
+    <div id="loader">تصاویر اپلوڈ ہو رہی ہیں، براہ کرم انتظار کریں... ⏳</div>
 
     <button class="add-btn" onclick="addNewProduct()">پروڈکٹ شائع کریں 🚀</button>
   </div>
@@ -108,7 +112,7 @@
 
     const ADMIN_PIN = "1234";
     const IMGBB_API_KEY = "66dcdf21e30733bfd85545d9fb5e76c4";
-    let selectedFile = null;
+    let selectedFiles = [];
 
     function checkPin() {
       const pin = document.getElementById('adminPinInput').value;
@@ -136,18 +140,24 @@
       if (cleanTitle) document.getElementById('pTitle').value = cleanTitle.substring(0, 80);
     }
 
-    function previewSelectedImage(event) {
-      const file = event.target.files[0];
-      if (file) {
-        selectedFile = file;
-        const reader = new FileReader();
-        reader.onload = function(e) {
-          const img = document.getElementById('previewImg');
-          img.src = e.target.result;
-          img.style.display = 'block';
-          document.getElementById('fileStatusText').innerText = "تصویر منتخب ہو گئی ہے ✅";
-        }
-        reader.readAsDataURL(file);
+    function previewSelectedImages(event) {
+      const files = Array.from(event.target.files);
+      const container = document.getElementById('previewContainer');
+      container.innerHTML = '';
+      selectedFiles = files;
+
+      if (files.length > 0) {
+        document.getElementById('fileStatusText').innerText = `${files.length} تصاویر منتخب کی گئی ہیں ✅`;
+        files.forEach(file => {
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            const img = document.createElement('img');
+            img.src = e.target.result;
+            img.className = 'preview-img';
+            container.appendChild(img);
+          }
+          reader.readAsDataURL(file);
+        });
       }
     }
 
@@ -185,32 +195,40 @@
         return;
       }
 
-      let uploadedImageUrl = "https://via.placeholder.com/150";
+      let uploadedImageUrls = [];
 
-      if (selectedFile) {
+      if (selectedFiles.length > 0) {
         loader.style.display = "block";
-        const formData = new FormData();
-        formData.append("image", selectedFile);
+        
+        for (let file of selectedFiles) {
+          const formData = new FormData();
+          formData.append("image", file);
 
-        try {
-          const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, {
-            method: "POST",
-            body: formData
-          });
-          const imgData = await res.json();
-          if (imgData.success) {
-            uploadedImageUrl = imgData.data.url;
+          try {
+            const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, {
+              method: "POST",
+              body: formData
+            });
+            const imgData = await res.json();
+            if (imgData.success) {
+              uploadedImageUrls.push(imgData.data.url);
+            }
+          } catch (e) {
+            console.error("تصویر اپلوڈ کا مسئلہ:", e);
           }
-        } catch (e) {
-          alert("تصویر اپلوڈ کرنے میں مسئلہ آیا، ڈیفالٹ امیج استعمال ہو رہی ہے۔");
         }
         loader.style.display = "none";
+      }
+
+      if (uploadedImageUrls.length === 0) {
+        uploadedImageUrls.push("https://via.placeholder.com/150");
       }
 
       db.push({
         title: title,
         desc: desc || "",
-        img: uploadedImageUrl,
+        images: uploadedImageUrls,
+        img: uploadedImageUrls[0], // بیک ورڈ کمپیٹیبلٹی کے لیے
         price: price || "Best Price",
         link: link,
         timestamp: Date.now()
@@ -221,9 +239,9 @@
         document.getElementById('pPrice').value = '';
         document.getElementById('pLink').value = '';
         document.getElementById('imgFileInput').value = '';
-        document.getElementById('previewImg').style.display = 'none';
-        document.getElementById('fileStatusText').innerText = "📁 گیلری سے تصویر منتخب کرنے کے لیے یہاں کلک کریں";
-        selectedFile = null;
+        document.getElementById('previewContainer').innerHTML = '';
+        document.getElementById('fileStatusText').innerText = "📁 گیلری سے تصاویر منتخب کرنے کے لیے یہاں کلک کریں";
+        selectedFiles = [];
 
         alert("پروڈکٹ کامیابی سے شامل کر دی گئی ہے!");
       }).catch((err) => {
