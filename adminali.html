@@ -141,19 +141,43 @@
         let title = "", link = "", price = "", img = "", category = "";
 
         keys.forEach(k => {
-          const keyLower = k.toLowerCase();
+          const keyLower = k.toLowerCase().trim();
           const val = row[k] ? row[k].toString().trim() : "";
-          if (keyLower.includes('title') || keyLower.includes('subject') || keyLower.includes('product name')) title = val;
-          if (keyLower.includes('url') || keyLower.includes('link')) link = val;
-          if (keyLower.includes('price')) price = val;
-          if (keyLower.includes('image') || keyLower.includes('img') || keyLower.includes('photo')) img = val;
-          if (keyLower.includes('category')) category = val;
+          
+          if (!val) return;
+
+          // Smart Title Detection (Ignore Numbers)
+          if ((keyLower.includes('title') || keyLower.includes('subject') || keyLower.includes('product name') || keyLower.includes('name')) && isNaN(val) && val.length > 5) {
+            if(!title) title = val;
+          }
+          
+          // Smart Link Detection
+          if (val.includes('http://') || val.includes('https://')) {
+            if (val.includes('.jpg') || val.includes('.png') || val.includes('.jpeg') || val.includes('.webp') || keyLower.includes('image') || keyLower.includes('img')) {
+              if(!img) img = val;
+            } else {
+              if(!link) link = val;
+            }
+          }
+
+          // Smart Price Detection
+          if (keyLower.includes('price') || keyLower.includes('amount') || keyLower.includes('sar')) {
+            if(!price) price = val;
+          }
+
+          // Category Detection
+          if (keyLower.includes('category')) {
+            if(!category) category = val;
+          }
         });
 
-        if (!title) title = row[keys[0]] || "";
-        if (!link) {
+        // Fallback for Title if not matched
+        if (!title) {
           keys.forEach(k => {
-            if (row[k] && row[k].toString().includes('http')) link = row[k];
+            const val = row[k] ? row[k].toString().trim() : "";
+            if (isNaN(val) && val.length > 15 && !val.includes('http')) {
+              title = val;
+            }
           });
         }
 
@@ -177,7 +201,7 @@
       });
 
       document.getElementById('importLoader').style.display = "none";
-      alert(`مبارک ہو! علی ایکسپریس فائل سے تمام ${count} پروڈکٹس کامیابی کے ساتھ امپورٹ ہو گئی ہیں! 🚀`);
+      alert(`کامیابی! تمام ${count} پروڈکٹس اب بالکل درست عنوان اور تصاویر کے ساتھ امپورٹ ہو گئی ہیں! 🚀`);
       location.reload();
     }
 
