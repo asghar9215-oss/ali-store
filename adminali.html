@@ -3,10 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ایڈمن پینل - ڈائریکٹ فائل امپورٹر</title>
+  <title>ایڈمن پینل - فاسٹ بلک امپورٹر</title>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-  <!-- CSV & Excel Parsing Libraries -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <style>
@@ -143,15 +142,12 @@
         keys.forEach(k => {
           const keyLower = k.toLowerCase().trim();
           const val = row[k] ? row[k].toString().trim() : "";
-          
           if (!val) return;
 
-          // Smart Title Detection (Ignore Numbers)
           if ((keyLower.includes('title') || keyLower.includes('subject') || keyLower.includes('product name') || keyLower.includes('name')) && isNaN(val) && val.length > 5) {
             if(!title) title = val;
           }
           
-          // Smart Link Detection
           if (val.includes('http://') || val.includes('https://')) {
             if (val.includes('.jpg') || val.includes('.png') || val.includes('.jpeg') || val.includes('.webp') || keyLower.includes('image') || keyLower.includes('img')) {
               if(!img) img = val;
@@ -160,18 +156,15 @@
             }
           }
 
-          // Smart Price Detection
           if (keyLower.includes('price') || keyLower.includes('amount') || keyLower.includes('sar')) {
             if(!price) price = val;
           }
 
-          // Category Detection
           if (keyLower.includes('category')) {
             if(!category) category = val;
           }
         });
 
-        // Fallback for Title if not matched
         if (!title) {
           keys.forEach(k => {
             const val = row[k] ? row[k].toString().trim() : "";
@@ -201,7 +194,7 @@
       });
 
       document.getElementById('importLoader').style.display = "none";
-      alert(`کامیابی! تمام ${count} پروڈکٹس اب بالکل درست عنوان اور تصاویر کے ساتھ امپورٹ ہو گئی ہیں! 🚀`);
+      alert(`کامیابی! تمام ${count} پروڈکٹس امپورٹ ہو گئی ہیں! 🚀`);
       location.reload();
     }
 
@@ -213,7 +206,7 @@
 
     function renderAdminList() {
       const container = document.getElementById('adminItemsList');
-      db.on('value', (snapshot) => {
+      db.once('value', (snapshot) => {
         const data = snapshot.val();
         if(!data) { container.innerHTML = '<p style="text-align:center; color:#94a3b8; font-size:12px;">کوئی پروڈکٹ موجود نہیں ہے۔</p>'; return; }
 
@@ -240,7 +233,9 @@
     }
 
     function deleteProduct(key) {
-      if (confirm("کیا آپ واقعی یہ پروڈکٹ ڈلیٹ کرنا چاہتے ہیں؟")) db.child(key).remove();
+      if (confirm("کیا آپ واقعی یہ پروڈکٹ ڈلیٹ کرنا چاہتے ہیں؟")) {
+        db.child(key).remove().then(() => location.reload());
+      }
     }
   </script>
 </body>
