@@ -1,11 +1,15 @@
 <!DOCTYPE html>
-<html lang="ur" dir="rtl" id="htmlTag">
+<html lang="en" dir="ltr" id="htmlTag">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title id="pageTitle">سعودی بیسٹ ڈیلز & ڈسکاؤنٹس</title>
+  <title id="pageTitle">Saudi Best Deals & Discounts</title>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+  
+  <!-- Additional Adsterra Script -->
+  <script data-cfasync="false" src="https://bauval.org/14/dde22c76238accac44005865c543d450"></script>
+
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; -webkit-tap-highlight-color: transparent; }
     body { background-color: #f5f5f5; color: #222222; padding: 8px; padding-bottom: 30px; }
@@ -26,6 +30,7 @@
     .cat-btn.active { background: #ff4747; color: #ffffff; border-color: #ff4747; }
 
     .adsterra-slim-banner { background: #ffffff; border-radius: 8px; padding: 4px; text-align: center; margin-bottom: 10px; display: flex; justify-content: center; align-items: center; min-height: 55px; overflow: hidden; border: 1px dashed #cbd5e1; }
+    .adsterra-in-grid-banner { grid-column: span 2; background: #ffffff; border-radius: 8px; padding: 6px; text-align: center; margin: 6px 0; display: flex; justify-content: center; align-items: center; min-height: 55px; border: 1px dashed #cbd5e1; }
 
     .products-container { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; width: 100%; }
     .product-card { background: #ffffff; border-radius: 12px; padding: 8px; border: 1px solid #f0f0f0; box-shadow: 0 2px 8px rgba(0,0,0,0.04); display: flex; flex-direction: column; justify-content: space-between; width: 100%; overflow: hidden; position: relative; }
@@ -45,8 +50,8 @@
     .buy-btn { display: block; background: linear-gradient(135deg, #ff4747 0%, #e60000 100%); color: #ffffff; text-decoration: none; text-align: center; padding: 8px 4px; border-radius: 20px; font-weight: bold; font-size: 12px; box-shadow: 0 2px 6px rgba(255, 71, 71, 0.25); }
 
     .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: none; justify-content: center; align-items: center; z-index: 1000; padding: 15px; }
-    .modal-box { background: #ffffff; width: 100%; max-width: 420px; border-radius: 14px; padding: 18px; max-height: 90vh; overflow-y: auto; text-align: right; position: relative; }
-    .close-modal { position: absolute; left: 15px; top: 12px; background: #e2e8f0; border: none; font-size: 16px; border-radius: 50%; width: 28px; height: 28px; cursor: pointer; font-weight: bold; }
+    .modal-box { background: #ffffff; width: 100%; max-width: 420px; border-radius: 14px; padding: 18px; max-height: 90vh; overflow-y: auto; text-align: left; position: relative; }
+    .close-modal { position: absolute; right: 15px; top: 12px; background: #e2e8f0; border: none; font-size: 16px; border-radius: 50%; width: 28px; height: 28px; cursor: pointer; font-weight: bold; }
     .modal-input { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; margin-bottom: 10px; font-size: 13px; outline: none; }
     .file-btn { border: 2px dashed #2563eb; background: #eff6ff; padding: 10px; text-align: center; border-radius: 8px; cursor: pointer; margin-bottom: 10px; font-size: 12px; }
 
@@ -56,25 +61,26 @@
 <body>
 
   <div class="lang-bar">
-    <button class="lang-btn active" id="btnUr" onclick="switchLanguage('ur')">🇵🇰 اردو</button>
-    <button class="lang-btn" id="btnEn" onclick="switchLanguage('en')">🇺🇸 English</button>
+    <button class="lang-btn active" id="btnEn" onclick="switchLanguage('en')">🇺🇸 English</button>
+    <button class="lang-btn" id="btnUr" onclick="switchLanguage('ur')">🇵🇰 اردو</button>
     <button class="lang-btn" id="btnAr" onclick="switchLanguage('ar')">🇸🇦 العربية</button>
     <button class="lang-btn" id="btnHi" onclick="switchLanguage('hi')">🇮🇳 हिंदी</button>
   </div>
 
-  <div class="header" id="appHeader">🛍️ سعودی بیسٹ ڈیلز & ڈسکاؤنٹس</div>
+  <div class="header" id="appHeader">🛍️ Saudi Best Deals & Discounts</div>
 
   <div class="action-btn-group">
     <button class="user-upload-btn" onclick="openUploadModal()">
-      <span id="btnUploadMain">➕ اپنی ڈیلز شائع کریں</span>
+      <span id="btnUploadMain">➕ Publish Deals</span>
     </button>
     <a href="mailto:aaspet2025@gmail.com?subject=Promote%20My%20Product%20on%20Saudi%20Best%20Deals&body=Hello%20Admin%2C%20I%20want%20to%20promote%20and%20pin%20my%20product/deal%20at%20the%20top%20of%20the%20Saudi%20Best%20Deals%20app.%20Please%20let%20me%20know%20the%20pricing%2C%20packages%2C%20and%20process.%20Thank%20you!" class="promo-btn" id="btnPromoMain">
-      📌 پروڈکٹ پروموٹر کروائیں
+      📌 Promote Deal
     </a>
   </div>
 
   <div class="category-scroll" id="categoryBar"></div>
 
+  <!-- Top Banner Ad -->
   <div class="adsterra-slim-banner">
     <script>
       atOptions = {
@@ -89,48 +95,49 @@
   </div>
 
   <div class="products-container" id="productsGrid">
-    <p style="text-align: center; grid-column: span 2; padding: 20px; color: #2563eb; font-weight:bold;">ڈیٹا لوڈ ہو رہا ہے... ⏳</p>
+    <p style="text-align: center; grid-column: span 2; padding: 20px; color: #2563eb; font-weight:bold;">Loading deals... ⏳</p>
   </div>
 
+  <!-- Bottom Banner Ad -->
   <div class="adsterra-slim-banner" style="margin-top: 16px;">
     <script>
       atOptions = {
-        'key' : 'cf3494f4a6b7bb56bec2bab7b59f7f36',
+        'key' : 'b56241b7779e2ce343e13c97202a3e26',
         'format' : 'iframe',
         'height' : 50,
         'width' : 320,
         'params' : {}
       };
     </script>
-    <script src="https://bauval.org/22/cf3494f4a6b7bb56bec2bab7b59f7f36"></script>
+    <script src="https://bauval.org/22/b56241b7779e2ce343e13c97202a3e26"></script>
   </div>
 
   <div class="modal-overlay" id="uploadModal">
     <div class="modal-box">
       <button class="close-modal" onclick="closeUploadModal()">✕</button>
-      <h3 style="margin-bottom: 12px; color:#2563eb; text-align:center;" id="modalHeading">🚀 اپنی پروڈکٹ شامل کریں</h3>
+      <h3 style="margin-bottom: 12px; color:#2563eb; text-align:center;" id="modalHeading">🚀 Add Your Product</h3>
       
-      <label style="font-size:11px; font-weight:bold;" id="lblTitle">پروڈکٹ کا عنوان:</label>
+      <label style="font-size:11px; font-weight:bold;" id="lblTitle">Product Title:</label>
       <input type="text" id="uTitle" class="modal-input" placeholder="...">
 
-      <label style="font-size:11px; font-weight:bold;" id="lblCategory">کیٹیگری:</label>
+      <label style="font-size:11px; font-weight:bold;" id="lblCategory">Category:</label>
       <select id="uCategory" class="modal-input"></select>
 
-      <label style="font-size:11px; font-weight:bold;" id="lblPrice">قیمت:</label>
+      <label style="font-size:11px; font-weight:bold;" id="lblPrice">Price:</label>
       <input type="text" id="uPrice" class="modal-input" placeholder="SAR 0.00">
 
-      <label style="font-size:11px; font-weight:bold;" id="lblLink">افیلی ایٹ لنک:</label>
+      <label style="font-size:11px; font-weight:bold;" id="lblLink">Affiliate Link:</label>
       <input type="text" id="uLink" class="modal-input" placeholder="https://..." dir="ltr">
 
-      <label style="font-size:11px; font-weight:bold;" id="lblImages">تصاویر (گیلری سے منتخب کریں):</label>
+      <label style="font-size:11px; font-weight:bold;" id="lblImages">Images (Select from Gallery):</label>
       <div class="file-btn" onclick="document.getElementById('uImgInput').click()">
-        <span id="uFileText">📁 گیلری سے تصاویر منتخب کریں</span>
+        <span id="uFileText">📁 Select Images from Gallery</span>
         <input type="file" id="uImgInput" accept="image/*" multiple style="display:none;" onchange="handleUserImages(event)">
       </div>
 
-      <div id="uLoader" style="display:none; text-align:center; font-size:12px; color:#2563eb; font-weight:bold; margin-bottom:8px;">اپلوڈ ہو رہا ہے... ⏳</div>
+      <div id="uLoader" style="display:none; text-align:center; font-size:12px; color:#2563eb; font-weight:bold; margin-bottom:8px;">Uploading... ⏳</div>
 
-      <button style="width:100%; background:#2563eb; color:white; border:none; padding:12px; border-radius:8px; font-weight:bold; cursor:pointer;" id="btnSubmitModal" onclick="submitUserProduct()">شائع کرنے کے لیے بھیجیں 📤</button>
+      <button style="width:100%; background:#2563eb; color:white; border:none; padding:12px; border-radius:8px; font-weight:bold; cursor:pointer;" id="btnSubmitModal" onclick="submitUserProduct()">Submit for Approval 📤</button>
     </div>
   </div>
 
@@ -152,7 +159,7 @@
 
     const IMGBB_API_KEY = "66dcdf21e30733bfd85545d9fb5e76c4";
     let userFiles = [];
-    let currentLang = 'ur';
+    let currentLang = 'en'; // Default Language set to English
     let currentCategory = 'all';
     let adminTrackingTag = ""; 
     const sliderIndices = {};
@@ -163,29 +170,6 @@
     });
 
     const translations = {
-      ur: { 
-        title: "🛍️ سعودی بیسٹ ڈیلز & ڈسکاؤنٹس", 
-        buyBtn: "🛒 خریداری کریں", 
-        emptyMsg: "کوئی پروڈکٹ موجود نہیں ہے۔", 
-        dir: "rtl",
-        btnUploadMain: "➕ اپنی ڈیلز شائع کریں",
-        btnPromoMain: "📌 پروڈکٹ پروموٹر کروائیں",
-        featuredBadge: "⭐ اسپانسرڈ",
-        modalHeading: "🚀 اپنی پروڈکٹ شامل کریں",
-        lblTitle: "پروڈکٹ کا عنوان:",
-        phTitle: "عنوان درج کریں...",
-        lblCategory: "کیٹیگری:",
-        lblPrice: "قیمت:",
-        lblLink: "افیلی ایٹ لنک:",
-        lblImages: "تصاویر (گیلری سے منتخب کریں):",
-        uFileText: "📁 گیلری سے تصاویر منتخب کریں",
-        btnSubmitModal: "شائع کرنے کے لیے بھیجیں 📤",
-        msgAlertNeedTitle: "براہ کرم عنوان اور افیلی ایٹ لنک درج کریں!",
-        msgAlertNeedImg: "براہ کرم کم از کم ایک پروڈکٹ کی تصویر اپلوڈ کریں!",
-        msgAlertImgErr: "تصویر اپلوڈ کرنے میں مسئلہ آیا ہے، صحیح تصویری فائل منتخب کریں!",
-        msgAlertSuccess: "آپ کی پروڈکٹ ایڈمن کو بھیج دی گئی ہے۔ ایڈمن کی منظوری کے بعد یہ لائیو شو ہو جائے گی! 🚀",
-        cats: { all: "سب", kids: "بچوں کے کپڑے", watch: "گھڑی", mobile: "موبائل فون", laptop: "لیپ ٹاپ", electronics: "الیکٹرانکس", keyboard: "کی بورڈ", shoes: "شوز", kitchen: "کچن کا سامان", medical: "میڈیکل سامان", beauty: "بیوٹی کریم", jewelry: "جیولری سامان" }
-      },
       en: { 
         title: "🛍️ Saudi Best Deals & Discounts", 
         buyBtn: "🛒 Buy Now", 
@@ -208,6 +192,29 @@
         msgAlertImgErr: "Error uploading image, please select a valid image file!",
         msgAlertSuccess: "Your product has been sent to admin. It will be live after approval! 🚀",
         cats: { all: "All", kids: "Kids Clothes", watch: "Watches", mobile: "Mobiles", laptop: "Laptops", electronics: "Electronics", keyboard: "Keyboards", shoes: "Shoes", kitchen: "Kitchenware", medical: "Medical Items", beauty: "Beauty Creams", jewelry: "Jewelry" }
+      },
+      ur: { 
+        title: "🛍️ سعودی بیسٹ ڈیلز & ڈسکاؤنٹس", 
+        buyBtn: "🛒 خریداری کریں", 
+        emptyMsg: "کوئی پروڈکٹ موجود نہیں ہے۔", 
+        dir: "rtl",
+        btnUploadMain: "➕ اپنی ڈیلز شائع کریں",
+        btnPromoMain: "📌 پروڈکٹ پروموٹر کروائیں",
+        featuredBadge: "⭐ اسپانسرڈ",
+        modalHeading: "🚀 اپنی پروڈکٹ شامل کریں",
+        lblTitle: "پروڈکٹ کا عنوان:",
+        phTitle: "عنوان درج کریں...",
+        lblCategory: "کیٹیگری:",
+        lblPrice: "قیمت:",
+        lblLink: "افیلی ایٹ لنک:",
+        lblImages: "تصاویر (گیلری سے منتخب کریں):",
+        uFileText: "📁 گیلری سے تصاویر منتخب کریں",
+        btnSubmitModal: "شائع کرنے کے لیے بھیجیں 📤",
+        msgAlertNeedTitle: "براہ کرم عنوان اور افیلی ایٹ لنک درج کریں!",
+        msgAlertNeedImg: "براہ کرم کم از کم ایک پروڈکٹ کی تصویر اپلوڈ کریں!",
+        msgAlertImgErr: "تصویر اپلوڈ کرنے میں مسئلہ آیا ہے، صحیح تصویری فائل منتخب کریں!",
+        msgAlertSuccess: "آپ کی پروڈکٹ ایڈمن کو بھیج دی گئی ہے۔ ایڈمن کی منظوری کے بعد یہ لائیو شو ہو جائے گی! 🚀",
+        cats: { all: "سب", kids: "بچوں کے کپڑے", watch: "گھڑی", mobile: "موبائل فون", laptop: "لیپ ٹاپ", electronics: "الیکٹرانکس", keyboard: "کی بورڈ", shoes: "شوز", kitchen: "کچن کا سامان", medical: "میڈیکل سامان", beauty: "بیوٹی کریم", jewelry: "جیولری سامان" }
       },
       ar: { 
         title: "🛍️ أفضل العروض والخصومات في السعودية", 
@@ -433,6 +440,12 @@
         return (data[b].timestamp || 0) - (data[a].timestamp || 0);
       });
 
+      const adHtml = `
+        <div class="adsterra-in-grid-banner">
+          <iframe srcdoc="<style>body{margin:0;padding:0;display:flex;justify-content:center;align-items:center;height:100vh;}</style><script>atOptions={'key':'b56241b7779e2ce343e13c97202a3e26','format':'iframe','height':50,'width':320,'params':{}};</script><script src='https://bauval.org/22/b56241b7779e2ce343e13c97202a3e26'></script>" style="width:320px;height:50px;border:none;overflow:hidden;"></iframe>
+        </div>
+      `;
+
       keysList.forEach((key) => {
         const item = data[key];
         if (currentCategory !== 'all' && item.category !== currentCategory) return;
@@ -465,6 +478,11 @@
             <a href="${finalBuyLink}" target="_blank" class="buy-btn">${translations[currentLang].buyBtn}</a>
           </div>
         `;
+
+        // Every 6 products, insert the Adsterra banner strip across the grid
+        if (count % 6 === 0) {
+          grid.innerHTML += adHtml;
+        }
       });
 
       if (count === 0) grid.innerHTML = `<p style="text-align: center; grid-column: span 2; padding: 20px; color: #64748b;">${translations[currentLang].emptyMsg}</p>`;
@@ -482,9 +500,7 @@
     }
 
     window.onload = function() { 
-      renderCategories(); 
-      renderModalCategories();
-      renderProducts(); 
+      switchLanguage('en'); 
     };
   </script>
 </body>
