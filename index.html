@@ -16,22 +16,22 @@
 
     .header { background: linear-gradient(135deg, #ff4747 0%, #e60000 100%); color: #ffffff; text-align: center; padding: 12px; border-radius: 12px; font-weight: bold; font-size: 16px; margin-bottom: 10px; box-shadow: 0 4px 10px rgba(255, 71, 71, 0.25); }
     
-    .user-upload-btn {
-      width: 100%; background: #2563eb; color: #ffffff; border: none; padding: 10px; border-radius: 10px; font-weight: bold; font-size: 13px; margin-bottom: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 3px 8px rgba(37, 99, 235, 0.25);
-    }
+    .action-btn-group { display: flex; gap: 8px; margin-bottom: 10px; }
+    .user-upload-btn { flex: 1; background: #2563eb; color: #ffffff; border: none; padding: 10px; border-radius: 10px; font-weight: bold; font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px; box-shadow: 0 3px 8px rgba(37, 99, 235, 0.25); }
+    .promo-btn { flex: 1; background: #16a34a; color: #ffffff; text-decoration: none; border: none; padding: 10px; border-radius: 10px; font-weight: bold; font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px; box-shadow: 0 3px 8px rgba(22, 163, 74, 0.25); text-align: center; }
 
     .category-scroll { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 10px; scrollbar-width: none; }
     .category-scroll::-webkit-scrollbar { display: none; }
     .cat-btn { white-space: nowrap; background: #ffffff; border: 1px solid #e2e8f0; padding: 7px 14px; border-radius: 20px; font-size: 11px; font-weight: bold; color: #475569; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.03); }
     .cat-btn.active { background: #ff4747; color: #ffffff; border-color: #ff4747; }
 
-    .adsterra-slim-banner { 
-      background: #ffffff; border-radius: 8px; padding: 4px; text-align: center; margin-bottom: 10px; display: flex; justify-content: center; align-items: center; min-height: 55px; overflow: hidden; border: 1px dashed #cbd5e1;
-    }
+    .adsterra-slim-banner { background: #ffffff; border-radius: 8px; padding: 4px; text-align: center; margin-bottom: 10px; display: flex; justify-content: center; align-items: center; min-height: 55px; overflow: hidden; border: 1px dashed #cbd5e1; }
 
     .products-container { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; width: 100%; }
-    .product-card { background: #ffffff; border-radius: 12px; padding: 8px; border: 1px solid #f0f0f0; box-shadow: 0 2px 8px rgba(0,0,0,0.04); display: flex; flex-direction: column; justify-content: space-between; width: 100%; overflow: hidden; }
-    
+    .product-card { background: #ffffff; border-radius: 12px; padding: 8px; border: 1px solid #f0f0f0; box-shadow: 0 2px 8px rgba(0,0,0,0.04); display: flex; flex-direction: column; justify-content: space-between; width: 100%; overflow: hidden; position: relative; }
+    .product-card.pinned { border: 2px solid #eab308; background: #fffdf0; }
+    .pinned-badge { position: absolute; top: 12px; right: 12px; background: #eab308; color: #000; font-size: 9px; font-weight: bold; padding: 3px 6px; border-radius: 4px; z-index: 10; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+
     .slider-wrapper { position: relative; width: 100%; height: 155px; border-radius: 8px; overflow: hidden; margin-bottom: 8px; background: #fdfdfd; }
     .slider-track { display: flex; width: 100%; height: 100%; transition: transform 0.3s ease-in-out; }
     .product-media { width: 100%; min-width: 100%; max-width: 100%; height: 155px; object-fit: cover; border-radius: 8px; border: none; display: block; }
@@ -64,9 +64,14 @@
 
   <div class="header" id="appHeader">🛍️ سعودی بیسٹ ڈیلز & ڈسکاؤنٹس</div>
 
-  <button class="user-upload-btn" onclick="openUploadModal()">
-    <span id="btnUploadMain">➕ اپنی ڈیلز/پروڈکٹ شائع کریں</span>
-  </button>
+  <div class="action-btn-group">
+    <button class="user-upload-btn" onclick="openUploadModal()">
+      <span id="btnUploadMain">➕ اپنی ڈیلز شائع کریں</span>
+    </button>
+    <a href="mailto:aaspet2025@gmail.com?subject=Promote%20My%20Product%20on%20Saudi%20Best%20Deals&body=Hello%20Admin%2C%20I%20want%20to%20promote%20and%20pin%20my%20product/deal%20at%20the%20top%20of%20the%20Saudi%20Best%20Deals%20app.%20Please%20let%20me%20know%20the%20pricing%2C%20packages%2C%20and%20process.%20Thank%20you!" class="promo-btn" id="btnPromoMain">
+      📌 پروڈکٹ پروموٹر کروائیں
+    </a>
+  </div>
 
   <div class="category-scroll" id="categoryBar"></div>
 
@@ -83,7 +88,9 @@
     <script src="https://bauval.org/22/cf3494f4a6b7bb56bec2bab7b59f7f36"></script>
   </div>
 
-  <div class="products-container" id="productsGrid"></div>
+  <div class="products-container" id="productsGrid">
+    <p style="text-align: center; grid-column: span 2; padding: 20px; color: #2563eb; font-weight:bold;">ڈیٹا لوڈ ہو رہا ہے... ⏳</p>
+  </div>
 
   <div class="adsterra-slim-banner" style="margin-top: 16px;">
     <script>
@@ -149,8 +156,9 @@
     let currentCategory = 'all';
     let adminTrackingTag = ""; 
     const sliderIndices = {};
+    let cachedProducts = null;
 
-    settingsDb.child("admin_tag").on('value', snap => {
+    settingsDb.child("admin_tag").once('value', snap => {
       if(snap.exists()) adminTrackingTag = snap.val();
     });
 
@@ -160,7 +168,9 @@
         buyBtn: "🛒 خریداری کریں", 
         emptyMsg: "کوئی پروڈکٹ موجود نہیں ہے۔", 
         dir: "rtl",
-        btnUploadMain: "➕ اپنی ڈیلز/پروڈکٹ شائع کریں",
+        btnUploadMain: "➕ اپنی ڈیلز شائع کریں",
+        btnPromoMain: "📌 پروڈکٹ پروموٹر کروائیں",
+        featuredBadge: "⭐ اسپانسرڈ",
         modalHeading: "🚀 اپنی پروڈکٹ شامل کریں",
         lblTitle: "پروڈکٹ کا عنوان:",
         phTitle: "عنوان درج کریں...",
@@ -181,7 +191,9 @@
         buyBtn: "🛒 Buy Now", 
         emptyMsg: "No products available.", 
         dir: "ltr",
-        btnUploadMain: "➕ Publish Your Deals / Product",
+        btnUploadMain: "➕ Publish Deals",
+        btnPromoMain: "📌 Promote Deal",
+        featuredBadge: "⭐ Featured",
         modalHeading: "🚀 Add Your Product",
         lblTitle: "Product Title:",
         phTitle: "Enter product title...",
@@ -202,7 +214,9 @@
         buyBtn: "🛒 اشتري الآن", 
         emptyMsg: "لا توجد منتجات متاحة.", 
         dir: "rtl",
-        btnUploadMain: "➕ انشر عروضك / منتجك",
+        btnUploadMain: "➕ انشر عروضك",
+        btnPromoMain: "📌 روج لمنتجك",
+        featuredBadge: "⭐ مميز",
         modalHeading: "🚀 أضف منتجك",
         lblTitle: "عنوان المنتج:",
         phTitle: "أدخل عنوان المنتج...",
@@ -223,7 +237,9 @@
         buyBtn: "🛒 खरीदें", 
         emptyMsg: "कोई उत्पाद उपलब्ध नहीं है।", 
         dir: "ltr",
-        btnUploadMain: "➕ अपनी डील/प्रोडक्ट पब्लिश करें",
+        btnUploadMain: "➕ अपनी डील पब्लिश करें",
+        btnPromoMain: "📌 प्रोडक्ट प्रमोट करें",
+        featuredBadge: "⭐ स्पॉन्सर्ड",
         modalHeading: "🚀 अपना प्रोडक्ट जोड़ें",
         lblTitle: "प्रोडक्ट का नाम:",
         phTitle: "प्रोडक्ट का नाम दर्ज करें...",
@@ -251,7 +267,6 @@
       }
     }
 
-    // Canvas Image Compressor Function
     function compressImage(file, maxWidth = 1000, quality = 0.75) {
       return new Promise((resolve) => {
         const reader = new FileReader();
@@ -297,7 +312,6 @@
       let imgUrls = [];
 
       for (let file of userFiles) {
-        // Auto Compress File
         const compressedFile = await compressImage(file);
         const formData = new FormData();
         formData.append("image", compressedFile);
@@ -316,7 +330,7 @@
       }
 
       pendingDb.push({
-        title: title, category: category, price: price || "Best Price", link: link, images: imgUrls, img: imgUrls[0], timestamp: Date.now()
+        title: title, category: category, price: price || "Best Price", link: link, images: imgUrls, img: imgUrls[0], pinned: false, timestamp: Date.now()
       }).then(() => {
         loader.style.display = "none";
         alert(langObj.msgAlertSuccess);
@@ -333,6 +347,7 @@
       document.getElementById('appHeader').innerText = langObj.title;
 
       document.getElementById('btnUploadMain').innerText = langObj.btnUploadMain;
+      document.getElementById('btnPromoMain').innerText = langObj.btnPromoMain;
       document.getElementById('modalHeading').innerText = langObj.modalHeading;
       document.getElementById('lblTitle').innerText = langObj.lblTitle;
       document.getElementById('uTitle').placeholder = langObj.phTitle;
@@ -403,46 +418,67 @@
       return originalLink;
     }
 
-    function renderProducts() {
+    function displayData(data) {
       const grid = document.getElementById('productsGrid');
-      db.on('value', (snapshot) => {
-        const data = snapshot.val();
-        if (!data) { grid.innerHTML = `<p style="text-align: center; grid-column: span 2; padding: 20px; color: #64748b;">${translations[currentLang].emptyMsg}</p>`; return; }
+      if (!data) { grid.innerHTML = `<p style="text-align: center; grid-column: span 2; padding: 20px; color: #64748b;">${translations[currentLang].emptyMsg}</p>`; return; }
 
-        grid.innerHTML = '';
-        let count = 0;
-        Object.keys(data).reverse().forEach((key, index) => {
-          const item = data[key];
-          if (currentCategory !== 'all' && item.category !== currentCategory) return;
-          count++;
-
-          const finalBuyLink = getFinalLink(item.link, count - 1);
-          const imgList = item.images && item.images.length > 0 ? item.images : [item.img || 'https://via.placeholder.com/150'];
-          let sliderHtml = imgList.length > 1 ? `
-            <div class="slider-wrapper">
-              <button class="slide-btn right" onclick="moveSlide('${key}', 1, ${imgList.length})">❯</button>
-              <div class="slider-track" id="track-${key}">
-                ${imgList.map(src => `<img src="${src}" class="product-media" onerror="this.src='https://via.placeholder.com/150'">`).join('')}
-              </div>
-              <button class="slide-btn left" onclick="moveSlide('${key}', -1, ${imgList.length})">❮</button>
-            </div>
-          ` : `<div class="slider-wrapper"><img src="${imgList[0]}" class="product-media" onerror="this.src='https://via.placeholder.com/150'"></div>`;
-
-          grid.innerHTML += `
-            <div class="product-card">
-              <div>
-                ${sliderHtml}
-                <div class="product-title">${item.title}</div>
-                ${item.desc ? `<div class="product-desc">${item.desc}</div>` : ''}
-                <div class="product-price">${item.price}</div>
-              </div>
-              <a href="${finalBuyLink}" target="_blank" class="buy-btn">${translations[currentLang].buyBtn}</a>
-            </div>
-          `;
-        });
-
-        if (count === 0) grid.innerHTML = `<p style="text-align: center; grid-column: span 2; padding: 20px; color: #64748b;">${translations[currentLang].emptyMsg}</p>`;
+      grid.innerHTML = '';
+      let count = 0;
+      const keysList = Object.keys(data);
+      
+      keysList.sort((a, b) => {
+        const isPinnedA = data[a].pinned ? 1 : 0;
+        const isPinnedB = data[b].pinned ? 1 : 0;
+        if (isPinnedA !== isPinnedB) return isPinnedB - isPinnedA;
+        return (data[b].timestamp || 0) - (data[a].timestamp || 0);
       });
+
+      keysList.forEach((key) => {
+        const item = data[key];
+        if (currentCategory !== 'all' && item.category !== currentCategory) return;
+        count++;
+
+        const finalBuyLink = getFinalLink(item.link, count - 1);
+        const imgList = item.images && item.images.length > 0 ? item.images : [item.img || 'https://via.placeholder.com/150'];
+        let sliderHtml = imgList.length > 1 ? `
+          <div class="slider-wrapper">
+            <button class="slide-btn right" onclick="moveSlide('${key}', 1, ${imgList.length})">❯</button>
+            <div class="slider-track" id="track-${key}">
+              ${imgList.map(src => `<img src="${src}" class="product-media" onerror="this.src='https://via.placeholder.com/150'">`).join('')}
+            </div>
+            <button class="slide-btn left" onclick="moveSlide('${key}', -1, ${imgList.length})">❮</button>
+          </div>
+        ` : `<div class="slider-wrapper"><img src="${imgList[0]}" class="product-media" onerror="this.src='https://via.placeholder.com/150'"></div>`;
+
+        const pinnedClass = item.pinned ? 'pinned' : '';
+        const pinnedBadge = item.pinned ? `<div class="pinned-badge">${translations[currentLang].featuredBadge}</div>` : '';
+
+        grid.innerHTML += `
+          <div class="product-card ${pinnedClass}">
+            ${pinnedBadge}
+            <div>
+              ${sliderHtml}
+              <div class="product-title">${item.title}</div>
+              ${item.desc ? `<div class="product-desc">${item.desc}</div>` : ''}
+              <div class="product-price">${item.price}</div>
+            </div>
+            <a href="${finalBuyLink}" target="_blank" class="buy-btn">${translations[currentLang].buyBtn}</a>
+          </div>
+        `;
+      });
+
+      if (count === 0) grid.innerHTML = `<p style="text-align: center; grid-column: span 2; padding: 20px; color: #64748b;">${translations[currentLang].emptyMsg}</p>`;
+    }
+
+    function renderProducts() {
+      if (cachedProducts) {
+        displayData(cachedProducts);
+      } else {
+        db.once('value', (snapshot) => {
+          cachedProducts = snapshot.val();
+          displayData(cachedProducts);
+        });
+      }
     }
 
     window.onload = function() { 
