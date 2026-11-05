@@ -3,11 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ایڈمن پینل - ڈائریکٹ فائل اپلوڈر</title>
+  <title>ایڈمن پینل - ڈائریکٹ فائل امپورٹر</title>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-  <!-- CSV Library for Parsing -->
+  <!-- CSV & Excel Parsing Libraries -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <style>
     body { background-color: #f8fafc; color: #0f172a; padding: 14px; font-family: sans-serif; }
     .admin-card { background: #ffffff; border: 2px solid #2563eb; border-radius: 12px; padding: 16px; max-width: 500px; margin: 0 auto 20px auto; }
@@ -49,13 +50,15 @@
   <div class="admin-card" style="border-color: #8b5cf6;">
     <h2 style="color: #8b5cf6;">📁 علی ایکسپریس ڈائریکٹ فائل امپورٹر (115+ Products)</h2>
     <div class="form-group">
-      <label>علی ایکسپریس سے ڈاؤن لوڈ کی گئی CSV / Excel فائل اپلوڈ کریں:</label>
+      <label>علی ایکسپریس کی (CSV / Excel) فائل منتخب کریں:</label>
       <div class="file-input-box" onclick="document.getElementById('csvFileInput').click()">
-        <span id="csvStatusText">📥 علی ایکسپریس کی CSV فائل منتخب کرنے کے لیے یہاں کلک کریں</span>
-        <input type="file" id="csvFileInput" accept=".csv, .xlsx, .xls" onchange="handleDirectCsvUpload(event)">
+        <span id="csvStatusText">📥 ڈائریکٹ فائل منتخب کرنے کے لیے یہاں کلک کریں</span>
+        <input type="file" id="csvFileInput" accept=".csv, .xlsx, .xls" onchange="fileSelected(event)">
       </div>
     </div>
-    <div id="importLoader" style="display:none; text-align:center; font-size:13px; color:#8b5cf6; font-weight:bold;">فائل ریڈ ہو رہی ہے، تمام پروڈکٹس امپورٹ ہو رہی ہیں... ⏳</div>
+    
+    <button class="add-btn" id="startImportBtn" style="background: #8b5cf6; display: none;" onclick="processSelectedFile()">تمام پروڈکٹس امپورٹ کریں 🚀</button>
+    <div id="importLoader" style="display:none; text-align:center; font-size:13px; color:#8b5cf6; font-weight:bold; margin-top:10px;">فائل پروسیس ہو رہی ہے، تمام پروڈکٹس امپورٹ کی جا رہی ہیں... ⏳</div>
   </div>
 
   <div class="items-list-box" id="adminItemsList" style="margin-top:20px;"></div>
@@ -75,6 +78,8 @@
     const db = firebase.database().ref("products");
     const settingsDb = firebase.database().ref("settings");
 
+    let currentSelectedFile = null;
+
     window.onload = function() {
       settingsDb.child("admin_tag").once('value', snap => {
         if(snap.exists()) document.getElementById('adminTagInput').value = snap.val();
@@ -90,56 +95,90 @@
       });
     }
 
-    // Direct AliExpress CSV Upload & Auto Convert Function
-    function handleDirectCsvUpload(event) {
+    function fileSelected(event) {
       const file = event.target.files[0];
-      if (!file) return;
+      if (file) {
+        currentSelectedFile = file;
+        document.getElementById('csvStatusText').innerText = `منتخب فائل: ${file.name} ✅`;
+        document.getElementById('startImportBtn').style.display = "block";
+      }
+    }
 
-      document.getElementById('csvStatusText').innerText = `فائل: ${file.name} ✅`;
+    function processSelectedFile() {
+      if (!currentSelectedFile) { alert("براہ کرم فائل منتخب کریں!"); return; }
+
       document.getElementById('importLoader').style.display = "block";
+      document.getElementById('startImportBtn').style.display = "none";
 
-      Papa.parse(file, {
-        header: true,
-        skipEmptyLines: true,
-        complete: function(results) {
-          let count = 0;
-          const rows = results.data;
+      const fileName = currentSelectedFile.name.toLowerCase();
 
-          rows.forEach(row => {
-            // Auto match columns from AliExpress Export Format
-            const title = row['Product Title'] || row['Subject'] || row['Title'] || row['product_title'];
-            const link = row['Promotion Url'] || row['Target Url'] || row['Link'] || row['promotion_link'];
-            const price = row['Discount Price'] || row['Original Price'] || row['Price'] || row['price'] || "Best Price";
-            const img = row['Image Url'] || row['Image'] || row['img_url'] || row['image_url'];
-            const category = row['Category'] || row['Category Name'] || "electronics";
+      if (fileName.endsWith('.xlsx') || fileName.endsWith('.xls')) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const data = new Uint8Array(e.target.result);
+          const workbook = XLSX.read(data, { type: 'array' });
+          const firstSheetName = workbook.SheetNames[0];
+          const worksheet = workbook.Sheets[firstSheetName];
+          const jsonData = XLSX.utils.sheet_to_json(worksheet, { defval: "" });
+          saveRowsToFirebase(jsonData);
+        };
+        reader.readAsArrayBuffer(currentSelectedFile);
+      } else {
+        Papa.parse(currentSelectedFile, {
+          header: true,
+          skipEmptyLines: true,
+          complete: function(results) {
+            saveRowsToFirebase(results.data);
+          }
+        });
+      }
+    }
 
-            if (title && link) {
-              db.push({
-                title: title.substring(0, 90),
-                category: category.toLowerCase().includes('kids') ? 'kids' : 
-                          category.toLowerCase().includes('watch') ? 'watch' : 
-                          category.toLowerCase().includes('mobile') ? 'mobile' : 
-                          category.toLowerCase().includes('laptop') ? 'laptop' : 
-                          category.toLowerCase().includes('shoe') ? 'shoes' : 'electronics',
-                price: price.toString().includes('SAR') ? price : `SAR ${price}`,
-                link: link,
-                images: img ? [img] : ["https://via.placeholder.com/150"],
-                img: img || "https://via.placeholder.com/150",
-                pinned: false,
-                timestamp: Date.now()
-              });
-              count++;
-            }
+    function saveRowsToFirebase(rows) {
+      let count = 0;
+      rows.forEach(row => {
+        const keys = Object.keys(row);
+        let title = "", link = "", price = "", img = "", category = "";
+
+        keys.forEach(k => {
+          const keyLower = k.toLowerCase();
+          const val = row[k] ? row[k].toString().trim() : "";
+          if (keyLower.includes('title') || keyLower.includes('subject') || keyLower.includes('product name')) title = val;
+          if (keyLower.includes('url') || keyLower.includes('link')) link = val;
+          if (keyLower.includes('price')) price = val;
+          if (keyLower.includes('image') || keyLower.includes('img') || keyLower.includes('photo')) img = val;
+          if (keyLower.includes('category')) category = val;
+        });
+
+        if (!title) title = row[keys[0]] || "";
+        if (!link) {
+          keys.forEach(k => {
+            if (row[k] && row[k].toString().includes('http')) link = row[k];
           });
+        }
 
-          document.getElementById('importLoader').style.display = "none";
-          alert(`مبارک ہو! علی ایکسپریس فائل سے تمام ${count} پروڈکٹس کامیابی کے ساتھ امپورٹ ہو گئی ہیں! 🚀`);
-        },
-        error: function(err) {
-          document.getElementById('importLoader').style.display = "none";
-          alert("فائل پڑھنے میں مسئلہ آیا ہے، صحیح CSV فائل منتخب کریں!");
+        if (title && link) {
+          db.push({
+            title: title.substring(0, 90),
+            category: category.toLowerCase().includes('kids') ? 'kids' : 
+                      category.toLowerCase().includes('watch') ? 'watch' : 
+                      category.toLowerCase().includes('mobile') ? 'mobile' : 
+                      category.toLowerCase().includes('laptop') ? 'laptop' : 
+                      category.toLowerCase().includes('shoe') ? 'shoes' : 'electronics',
+            price: price ? (price.includes('SAR') ? price : `SAR ${price}`) : "Best Price",
+            link: link,
+            images: img ? [img] : ["https://via.placeholder.com/150"],
+            img: img || "https://via.placeholder.com/150",
+            pinned: false,
+            timestamp: Date.now()
+          });
+          count++;
         }
       });
+
+      document.getElementById('importLoader').style.display = "none";
+      alert(`مبارک ہو! علی ایکسپریس فائل سے تمام ${count} پروڈکٹس کامیابی کے ساتھ امپورٹ ہو گئی ہیں! 🚀`);
+      location.reload();
     }
 
     function togglePin(key, currentStatus) {
