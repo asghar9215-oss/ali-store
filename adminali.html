@@ -3,9 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ایڈمن پینل - نئی پروڈکٹ شامل کریں</title>
+  <title>ایڈمن پینل - ڈائریکٹ فائل اپلوڈر</title>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+  <!-- CSV Library for Parsing -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
   <style>
     body { background-color: #f8fafc; color: #0f172a; padding: 14px; font-family: sans-serif; }
     .admin-card { background: #ffffff; border: 2px solid #2563eb; border-radius: 12px; padding: 16px; max-width: 500px; margin: 0 auto 20px auto; }
@@ -17,11 +19,8 @@
       width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px; box-sizing: border-box; background-color: #ffffff; color: #000000;
     }
     
-    .file-input-box { border: 2px dashed #2563eb; background: #eff6ff; padding: 14px; text-align: center; border-radius: 8px; cursor: pointer; }
+    .file-input-box { border: 2px dashed #8b5cf6; background: #f3e8ff; padding: 16px; text-align: center; border-radius: 8px; cursor: pointer; }
     .file-input-box input[type="file"] { display: none; }
-    
-    .preview-container { display: flex; gap: 6px; overflow-x: auto; margin-top: 8px; padding-bottom: 4px; justify-content: center; flex-wrap: wrap; }
-    .preview-img { width: 65px; height: 65px; object-fit: cover; border-radius: 6px; border: 1px solid #2563eb; }
 
     .add-btn { width: 100%; background: #2563eb; color: #fff; border: none; padding: 14px; font-weight: bold; border-radius: 8px; cursor: pointer; font-size: 15px; margin-top: 10px; }
 
@@ -30,10 +29,8 @@
     .item-info { display: flex; align-items: center; gap: 10px; }
     .item-thumb { width: 45px; height: 45px; object-fit: cover; border-radius: 6px; border: 1px solid #cbd5e1; }
     .item-title { font-size: 12px; font-weight: bold; color: #1e293b; }
-    .approve-btn { background: #22c55e; color: white; border: none; padding: 6px 10px; font-size: 11px; border-radius: 6px; cursor: pointer; margin-left: 4px; }
     .pin-btn { background: #eab308; color: black; border: none; padding: 6px 10px; font-size: 11px; font-weight: bold; border-radius: 6px; cursor: pointer; margin-left: 4px; }
     .del-btn { background: #ef4444; color: white; border: none; padding: 6px 10px; font-size: 11px; border-radius: 6px; cursor: pointer; }
-    #loader { font-size: 12px; color: #2563eb; font-weight: bold; text-align: center; display: none; margin-top: 6px; }
   </style>
 </head>
 <body>
@@ -48,71 +45,19 @@
     <button class="add-btn" style="background: #16a34a;" onclick="saveAdminTag()">ٹیگ محفوظ کریں 💾</button>
   </div>
 
-  <!-- Bulk Import Box (ایک ساتھ تمام پروڈکٹس اپلوڈ کریں) -->
+  <!-- Direct AliExpress File Import Box -->
   <div class="admin-card" style="border-color: #8b5cf6;">
-    <h2 style="color: #8b5cf6;">📦 ایک ساتھ تمام پروڈکٹس بلک امپورٹ کریں (Bulk JSON Import)</h2>
+    <h2 style="color: #8b5cf6;">📁 علی ایکسپریس ڈائریکٹ فائل امپورٹر (115+ Products)</h2>
     <div class="form-group">
-      <label>تمام پروڈکٹس کا JSON کوڈ یہاں پیسٹ کریں:</label>
-      <textarea id="bulkJsonInput" rows="5" placeholder='[{"title":"...", "price":"SAR 10", "link":"https://...", "category":"mobile", "images":["https://..."]}]' dir="ltr"></textarea>
-    </div>
-    <button class="add-btn" style="background: #8b5cf6;" onclick="importBulkProducts()">تمام پروڈکٹس ایک ساتھ شامل کریں 🚀</button>
-  </div>
-
-  <div class="admin-card">
-    <h2>⚡ سنگل ایڈمن اپلوڈ پینل (AliExpress)</h2>
-    
-    <div class="form-group">
-      <label>علی ایکسپریس کا کاپی شدہ متن پیسٹ کریں:</label>
-      <textarea id="smartPastedText" rows="3" placeholder="متن یا لنک یہاں پیسٹ کریں..." oninput="autoParseText()"></textarea>
-    </div>
-
-    <div class="form-group">
-      <label>پروڈکٹ کا عنوان (Title):</label>
-      <input type="text" id="pTitle" placeholder="عنوان...">
-    </div>
-
-    <div class="form-group">
-      <label>کیٹیگری منتخب کریں (Category):</label>
-      <select id="pCategory">
-        <option value="kids">بچوں کے کپڑے</option>
-        <option value="watch">گھڑی</option>
-        <option value="mobile">موبائل فون</option>
-        <option value="laptop">لیپ ٹاپ</option>
-        <option value="electronics">الیکٹرانکس</option>
-        <option value="keyboard">کی بورڈ</option>
-        <option value="shoes">شوز</option>
-        <option value="kitchen">کچن / برتن</option>
-        <option value="medical">میڈیکل سامان</option>
-        <option value="beauty">بیوٹی کریم</option>
-        <option value="jewelry">جیولری سامان</option>
-      </select>
-    </div>
-
-    <div class="form-group">
-      <label>قیمت (Price):</label>
-      <input type="text" id="pPrice" placeholder="SAR 0.00">
-    </div>
-
-    <div class="form-group">
-      <label>افیلی ایٹ لنک (Affiliate Link):</label>
-      <input type="text" id="pLink" placeholder="https://..." dir="ltr">
-    </div>
-
-    <div class="form-group">
-      <label>گیلری سے (3 یا 4) تصاویر منتخب کریں:</label>
-      <div class="file-input-box" onclick="document.getElementById('imgFileInput').click()">
-        <span id="fileStatusText">📁 گیلری سے تصاویر منتخب کرنے کے لیے یہاں کلک کریں</span>
-        <input type="file" id="imgFileInput" accept="image/*" multiple onchange="previewSelectedImages(event)">
-        <div id="previewContainer" class="preview-container"></div>
+      <label>علی ایکسپریس سے ڈاؤن لوڈ کی گئی CSV / Excel فائل اپلوڈ کریں:</label>
+      <div class="file-input-box" onclick="document.getElementById('csvFileInput').click()">
+        <span id="csvStatusText">📥 علی ایکسپریس کی CSV فائل منتخب کرنے کے لیے یہاں کلک کریں</span>
+        <input type="file" id="csvFileInput" accept=".csv, .xlsx, .xls" onchange="handleDirectCsvUpload(event)">
       </div>
     </div>
-
-    <div id="loader">تصاویر پروسیس اور اپلوڈ ہو رہی ہیں... ⏳</div>
-
-    <button class="add-btn" onclick="addNewProduct()">پروڈکٹ شائع کریں 🚀</button>
+    <div id="importLoader" style="display:none; text-align:center; font-size:13px; color:#8b5cf6; font-weight:bold;">فائل ریڈ ہو رہی ہے، تمام پروڈکٹس امپورٹ ہو رہی ہیں... ⏳</div>
   </div>
 
-  <div class="items-list-box" id="pendingItemsList"></div>
   <div class="items-list-box" id="adminItemsList" style="margin-top:20px;"></div>
 
   <script>
@@ -128,17 +73,12 @@
     };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database().ref("products");
-    const pendingDb = firebase.database().ref("pending_products");
     const settingsDb = firebase.database().ref("settings");
-
-    const IMGBB_API_KEY = "66dcdf21e30733bfd85545d9fb5e76c4";
-    let selectedFiles = [];
 
     window.onload = function() {
       settingsDb.child("admin_tag").once('value', snap => {
         if(snap.exists()) document.getElementById('adminTagInput').value = snap.val();
       });
-      renderPendingList();
       renderAdminList();
     };
 
@@ -150,144 +90,57 @@
       });
     }
 
-    // Bulk Products Import Function
-    function importBulkProducts() {
-      const rawJson = document.getElementById('bulkJsonInput').value.trim();
-      if(!rawJson) { alert("براہ کرم JSON کوڈ درج کریں!"); return; }
+    // Direct AliExpress CSV Upload & Auto Convert Function
+    function handleDirectCsvUpload(event) {
+      const file = event.target.files[0];
+      if (!file) return;
 
-      try {
-        const items = JSON.parse(rawJson);
-        if(!Array.isArray(items)) { alert("کوڈ درست JSON Array فارمیٹ میں نہیں ہے!"); return; }
+      document.getElementById('csvStatusText').innerText = `فائل: ${file.name} ✅`;
+      document.getElementById('importLoader').style.display = "block";
 
-        let count = 0;
-        items.forEach(item => {
-          if(item.title && item.link) {
-            db.push({
-              title: item.title,
-              category: item.category || "electronics",
-              price: item.price || "Best Price",
-              link: item.link,
-              images: item.images || [item.img || "https://via.placeholder.com/150"],
-              img: item.img || (item.images ? item.images[0] : "https://via.placeholder.com/150"),
-              pinned: false,
-              timestamp: Date.now()
-            });
-            count++;
-          }
-        });
+      Papa.parse(file, {
+        header: true,
+        skipEmptyLines: true,
+        complete: function(results) {
+          let count = 0;
+          const rows = results.data;
 
-        alert(`کامیابی! ${count} پروڈکٹس ایک ساتھ ڈیٹا بیس میں امپورٹ ہو گئی ہیں! 🚀`);
-        document.getElementById('bulkJsonInput').value = '';
-      } catch(e) {
-        alert("JSON کوڈ میں غلطی ہے، براہ کرم فارمیٹ چیک کریں!");
-      }
-    }
+          rows.forEach(row => {
+            // Auto match columns from AliExpress Export Format
+            const title = row['Product Title'] || row['Subject'] || row['Title'] || row['product_title'];
+            const link = row['Promotion Url'] || row['Target Url'] || row['Link'] || row['promotion_link'];
+            const price = row['Discount Price'] || row['Original Price'] || row['Price'] || row['price'] || "Best Price";
+            const img = row['Image Url'] || row['Image'] || row['img_url'] || row['image_url'];
+            const category = row['Category'] || row['Category Name'] || "electronics";
 
-    function compressImage(file, maxWidth = 1000, quality = 0.75) {
-      return new Promise((resolve) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = (event) => {
-          const img = new Image();
-          img.src = event.target.result;
-          img.onload = () => {
-            const canvas = document.createElement('canvas');
-            let width = img.width;
-            let height = img.height;
-
-            if (width > maxWidth) {
-              height = Math.round((height * maxWidth) / width);
-              width = maxWidth;
+            if (title && link) {
+              db.push({
+                title: title.substring(0, 90),
+                category: category.toLowerCase().includes('kids') ? 'kids' : 
+                          category.toLowerCase().includes('watch') ? 'watch' : 
+                          category.toLowerCase().includes('mobile') ? 'mobile' : 
+                          category.toLowerCase().includes('laptop') ? 'laptop' : 
+                          category.toLowerCase().includes('shoe') ? 'shoes' : 'electronics',
+                price: price.toString().includes('SAR') ? price : `SAR ${price}`,
+                link: link,
+                images: img ? [img] : ["https://via.placeholder.com/150"],
+                img: img || "https://via.placeholder.com/150",
+                pinned: false,
+                timestamp: Date.now()
+              });
+              count++;
             }
-
-            canvas.width = width;
-            canvas.height = height;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(img, 0, 0, width, height);
-
-            canvas.toBlob((blob) => {
-              resolve(new File([blob], file.name, { type: 'image/jpeg', lastModified: Date.now() }));
-            }, 'image/jpeg', quality);
-          };
-        };
-      });
-    }
-
-    function autoParseText() {
-      const raw = document.getElementById('smartPastedText').value;
-      if (!raw) return;
-      const urlMatch = raw.match(/(https?:\/\/[^\s]+)/g);
-      if (urlMatch) document.getElementById('pLink').value = urlMatch[0];
-      const priceMatch = raw.match(/(SAR\s?[\d\.]+)/i) || raw.match(/(SAR\s?[\d,]+)/i);
-      if (priceMatch) document.getElementById('pPrice').value = priceMatch[0];
-      let cleanTitle = raw.replace(/(https?:\/\/[^\s]+)/g, '').replace(/Price Now:?/i, '').replace(/SAR\s?[\d\.]+/g, '').replace(/Click & Buy:?/i, '').trim();
-      if (cleanTitle) document.getElementById('pTitle').value = cleanTitle.substring(0, 80);
-    }
-
-    function previewSelectedImages(event) {
-      const files = Array.from(event.target.files);
-      const container = document.getElementById('previewContainer');
-      container.innerHTML = '';
-      selectedFiles = files;
-
-      if (files.length > 0) {
-        document.getElementById('fileStatusText').innerText = `${files.length} تصاویر منتخب کی گئی ہیں ✅`;
-        files.forEach(file => {
-          const reader = new FileReader();
-          reader.onload = function(e) {
-            const img = document.createElement('img');
-            img.src = e.target.result;
-            img.className = 'preview-img';
-            container.appendChild(img);
-          }
-          reader.readAsDataURL(file);
-        });
-      }
-    }
-
-    function renderPendingList() {
-      const container = document.getElementById('pendingItemsList');
-      pendingDb.on('value', (snapshot) => {
-        const data = snapshot.val();
-        if(!data) { container.innerHTML = ''; return; }
-
-        container.innerHTML = '<h3 style="font-size:13px; color:#e11d48; margin-bottom:8px;">⏳ صارفین کی بھیجی گئی پینڈنگ پروڈکٹس:</h3>';
-        Object.keys(data).reverse().forEach((key) => {
-          const item = data[key];
-          const imgUrl = (item.images && item.images.length > 0) ? item.images[0] : (item.img || 'https://via.placeholder.com/150');
-          
-          container.innerHTML += `
-            <div class="item-row">
-              <div class="item-info">
-                <img src="${imgUrl}" class="item-thumb" onerror="this.src='https://via.placeholder.com/150'">
-                <div>
-                  <div class="item-title">${item.title}</div>
-                  <div style="font-size:10px; color:#64748b;">${item.price || ''}</div>
-                </div>
-              </div>
-              <div>
-                <button class="approve-btn" onclick="approveProduct('${key}')">✅ منظور کریں</button>
-                <button class="del-btn" onclick="rejectProduct('${key}')">🗑️ منسوخ</button>
-              </div>
-            </div>
-          `;
-        });
-      });
-    }
-
-    function approveProduct(key) {
-      pendingDb.child(key).once('value', (snapshot) => {
-        const item = snapshot.val();
-        if(item) {
-          db.push(item).then(() => {
-            pendingDb.child(key).remove();
-            alert("پروڈکٹ منظور ہو کر پبلک ایپ پر لائیو کر دی گئی ہے!");
           });
+
+          document.getElementById('importLoader').style.display = "none";
+          alert(`مبارک ہو! علی ایکسپریس فائل سے تمام ${count} پروڈکٹس کامیابی کے ساتھ امپورٹ ہو گئی ہیں! 🚀`);
+        },
+        error: function(err) {
+          document.getElementById('importLoader').style.display = "none";
+          alert("فائل پڑھنے میں مسئلہ آیا ہے، صحیح CSV فائل منتخب کریں!");
         }
       });
     }
-
-    function rejectProduct(key) { pendingDb.child(key).remove(); }
 
     function togglePin(key, currentStatus) {
       db.child(key).update({ pinned: !currentStatus }).then(() => {
@@ -320,49 +173,6 @@
             </div>
           `;
         });
-      });
-    }
-
-    async function addNewProduct() {
-      const title = document.getElementById('pTitle').value.trim();
-      const category = document.getElementById('pCategory').value;
-      const price = document.getElementById('pPrice').value.trim();
-      const link = document.getElementById('pLink').value.trim();
-      const loader = document.getElementById('loader');
-
-      if (!title || !link) { alert("براہ کرم عنوان اور افیلی ایٹ لنک درج کریں!"); return; }
-      if (selectedFiles.length === 0) { alert("براہ کرم کم از کم ایک تصویر منتخب کریں!"); return; }
-
-      let uploadedImageUrls = [];
-      loader.style.display = "block";
-      
-      for (let file of selectedFiles) {
-        const compressedFile = await compressImage(file);
-        const formData = new FormData();
-        formData.append("image", compressedFile);
-        
-        try {
-          const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, { method: "POST", body: formData });
-          const imgData = await res.json();
-          if (imgData.success) uploadedImageUrls.push(imgData.data.url);
-        } catch (e){}
-      }
-      loader.style.display = "none";
-
-      if (uploadedImageUrls.length === 0) { alert("تصویر اپلوڈ کرنے میں مسئلہ آیا ہے، دوبارہ کوشش کریں!"); return; }
-
-      db.push({
-        title: title, category: category, images: uploadedImageUrls, img: uploadedImageUrls[0], price: price || "Best Price", link: link, pinned: false, timestamp: Date.now()
-      }).then(() => {
-        document.getElementById('smartPastedText').value = '';
-        document.getElementById('pTitle').value = '';
-        document.getElementById('pPrice').value = '';
-        document.getElementById('pLink').value = '';
-        document.getElementById('imgFileInput').value = '';
-        document.getElementById('previewContainer').innerHTML = '';
-        document.getElementById('fileStatusText').innerText = "📁 گیلری سے تصاویر منتخب کرنے کے لیے یہاں کلک کریں";
-        selectedFiles = [];
-        alert("پروڈکٹ کامیابی سے لائیو شامل کر دی گئی ہے!");
       });
     }
 
