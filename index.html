@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en" dir="ltr" id="htmlTag">
 <head>
@@ -10,7 +9,7 @@
 
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; -webkit-tap-highlight-color: transparent; }
-    body { background-color: #f5f5f5; color: #222222; padding: 8px; padding-bottom: 30px; position: relative; }
+    body { background-color: #f5f5f5; color: #222222; padding: 8px; padding-bottom: 30px; }
 
     .lang-bar { display: flex; justify-content: space-around; gap: 4px; margin-bottom: 10px; background: #ffffff; padding: 6px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
     .lang-btn { flex: 1; background: #f1f5f9; border: 1px solid #cbd5e1; padding: 8px 4px; border-radius: 8px; font-size: 11px; font-weight: bold; cursor: pointer; color: #334155; display: flex; align-items: center; justify-content: center; gap: 4px; }
@@ -53,22 +52,6 @@
     .modal-input { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; margin-bottom: 10px; font-size: 13px; outline: none; }
     .file-btn { border: 2px dashed #2563eb; background: #eff6ff; padding: 10px; text-align: center; border-radius: 8px; cursor: pointer; margin-bottom: 10px; font-size: 12px; }
 
-    /* Centered Floating Circular Ad Badge */
-    .floating-ad-circle {
-      position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%);
-      width: 48px; height: 48px;
-      background: linear-gradient(135deg, #ff4747 0%, #e60000 100%);
-      border-radius: 50%; display: flex; align-items: center; justify-content: center;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.3); border: 2px solid #ffffff;
-      z-index: 999; cursor: pointer; animation: pulse 2s infinite; text-decoration: none;
-    }
-    .floating-ad-circle span { font-size: 20px; }
-    @keyframes pulse {
-      0% { transform: translateX(-50%) scale(1); box-shadow: 0 0 0 0 rgba(255, 71, 71, 0.7); }
-      70% { transform: translateX(-50%) scale(1.08); box-shadow: 0 0 0 10px rgba(255, 71, 71, 0); }
-      100% { transform: translateX(-50%) scale(1); box-shadow: 0 0 0 0 rgba(255, 71, 71, 0); }
-    }
-
     @media (max-width: 340px) { .products-container { grid-template-columns: 1fr; } }
   </style>
 </head>
@@ -94,7 +77,7 @@
 
   <div class="category-scroll" id="categoryBar"></div>
 
-  <!-- Top Slim Banner Ad -->
+  <!-- Top Banner Ad -->
   <div class="adsterra-slim-banner">
     <script>
       atOptions = {
@@ -112,24 +95,19 @@
     <p style="text-align: center; grid-column: span 2; padding: 20px; color: #2563eb; font-weight:bold;">Loading deals... ⏳</p>
   </div>
 
-  <!-- Bottom Slim Banner Ad -->
+  <!-- Bottom Banner Ad -->
   <div class="adsterra-slim-banner" style="margin-top: 16px;">
     <script>
       atOptions = {
-        'key' : 'b56241b7779e2ce343e13c97202a3e26',
+        'key' : 'cf3494f4a6b7bb56bec2bab7b59f7f36',
         'format' : 'iframe',
         'height' : 50,
         'width' : 320,
         'params' : {}
       };
     </script>
-    <script src="https://bauval.org/22/b56241b7779e2ce343e13c97202a3e26"></script>
+    <script src="https://bauval.org/22/cf3494f4a6b7bb56bec2bab7b59f7f36"></script>
   </div>
-
-  <!-- Centered Small Circular Floating Ad Ball -->
-  <a href="https://bauval.org/14/dde22c76238accac44005865c543d450" target="_blank" class="floating-ad-circle" title="Special Deals">
-    <span>🎁</span>
-  </a>
 
   <div class="modal-overlay" id="uploadModal">
     <div class="modal-box">
@@ -459,10 +437,10 @@
         return (data[b].timestamp || 0) - (data[a].timestamp || 0);
       });
 
-      // Safe Iframe Banner Ad Injection
-      const adIframeHtml = `
+      // Safe Clean Banner Ad
+      const cleanBannerHtml = `
         <div class="adsterra-in-grid-banner">
-          <iframe srcdoc="<style>body{margin:0;padding:0;display:flex;justify-content:center;align-items:center;height:100vh;}</style><script>atOptions={'key':'b56241b7779e2ce343e13c97202a3e26','format':'iframe','height':50,'width':320,'params':{}};</script><script src='https://bauval.org/22/b56241b7779e2ce343e13c97202a3e26'></script>" style="width:320px;height:50px;border:none;overflow:hidden;"></iframe>
+          <iframe srcdoc="<style>body{margin:0;padding:0;display:flex;justify-content:center;align-items:center;height:100vh;}</style><script>atOptions={'key':'cf3494f4a6b7bb56bec2bab7b59f7f36','format':'iframe','height':50,'width':320,'params':{}};</script><script src='https://bauval.org/22/cf3494f4a6b7bb56bec2bab7b59f7f36'></script>" style="width:320px;height:50px;border:none;overflow:hidden;"></iframe>
         </div>
       `;
 
@@ -499,9 +477,9 @@
           </div>
         `;
 
-        // Every 6 products (3 rows), insert the Ad Banner
+        // Exactly after every 6 products (3 rows), insert your 320x50 Banner Strip
         if (count % 6 === 0) {
-          grid.innerHTML += adIframeHtml;
+          grid.innerHTML += cleanBannerHtml;
         }
       });
 
