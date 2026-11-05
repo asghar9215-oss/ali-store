@@ -7,9 +7,6 @@
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
-  <!-- Adsterra Social Bar Script -->
-  <script data-cfasync="false" src="https://bauval.org/14/dde22c76238accac44005865c543d450"></script>
-
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; -webkit-tap-highlight-color: transparent; }
     body { background-color: #f5f5f5; color: #222222; padding: 8px; padding-bottom: 30px; position: relative; }
@@ -30,7 +27,7 @@
     .cat-btn.active { background: #ff4747; color: #ffffff; border-color: #ff4747; }
 
     .adsterra-slim-banner { background: #ffffff; border-radius: 8px; padding: 4px; text-align: center; margin-bottom: 10px; display: flex; justify-content: center; align-items: center; min-height: 55px; overflow: hidden; border: 1px dashed #cbd5e1; }
-    .adsterra-in-grid-banner { grid-column: span 2; background: #ffffff; border-radius: 8px; padding: 4px; text-align: center; margin: 6px 0; display: flex; justify-content: center; align-items: center; min-height: 55px; border: 1px dashed #cbd5e1; }
+    .adsterra-in-grid-banner { grid-column: span 2; background: #ffffff; border-radius: 8px; padding: 4px; text-align: center; margin: 6px 0; display: flex; justify-content: center; align-items: center; min-height: 55px; border: 1px dashed #cbd5e1; overflow: hidden; }
 
     .products-container { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; width: 100%; }
     .product-card { background: #ffffff; border-radius: 12px; padding: 8px; border: 1px solid #f0f0f0; box-shadow: 0 2px 8px rgba(0,0,0,0.04); display: flex; flex-direction: column; justify-content: space-between; width: 100%; overflow: hidden; position: relative; }
@@ -55,14 +52,14 @@
     .modal-input { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; margin-bottom: 10px; font-size: 13px; outline: none; }
     .file-btn { border: 2px dashed #2563eb; background: #eff6ff; padding: 10px; text-align: center; border-radius: 8px; cursor: pointer; margin-bottom: 10px; font-size: 12px; }
 
-    /* Centered Small Circular Ad Ball at Bottom */
+    /* Centered Floating Circular Ad Badge */
     .floating-ad-circle {
       position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%);
       width: 48px; height: 48px;
       background: linear-gradient(135deg, #ff4747 0%, #e60000 100%);
       border-radius: 50%; display: flex; align-items: center; justify-content: center;
       box-shadow: 0 4px 12px rgba(0,0,0,0.3); border: 2px solid #ffffff;
-      z-index: 999; cursor: pointer; animation: pulse 2s infinite; border: none;
+      z-index: 999; cursor: pointer; animation: pulse 2s infinite; text-decoration: none;
     }
     .floating-ad-circle span { font-size: 20px; }
     @keyframes pulse {
@@ -129,9 +126,9 @@
   </div>
 
   <!-- Centered Small Circular Floating Ad Ball -->
-  <button class="floating-ad-circle" onclick="triggerAdSocialBar()" title="Special Deals">
+  <a href="https://bauval.org/14/dde22c76238accac44005865c543d450" target="_blank" class="floating-ad-circle" title="Special Deals">
     <span>🎁</span>
-  </button>
+  </a>
 
   <div class="modal-overlay" id="uploadModal">
     <div class="modal-box">
@@ -284,11 +281,6 @@
         cats: { all: "सब", kids: "बच्चों के कपड़े", watch: "घड़ी", mobile: "मोबाइल", laptop: "लैपटॉप", electronics: "इलेक्ट्रॉनिक्स", keyboard: "कीबोर्ड", shoes: "जूते", kitchen: "रसोई का सामान", medical: "मेडिकल सामान", beauty: "ब्यूटी क्रीम", jewelry: "ज्वेलरी सामान" }
       }
     };
-
-    function triggerAdSocialBar() {
-      // Safely triggers the ad script or opens an offer
-      window.open('https://bauval.org/14/dde22c76238accac44005865c543d450', '_blank');
-    }
 
     function openUploadModal() { document.getElementById('uploadModal').style.display = 'flex'; }
     function closeUploadModal() { document.getElementById('uploadModal').style.display = 'none'; }
@@ -466,18 +458,10 @@
         return (data[b].timestamp || 0) - (data[a].timestamp || 0);
       });
 
-      const inGridBannerHtml = `
+      // Safe Iframe Banner Ad Injection
+      const adIframeHtml = `
         <div class="adsterra-in-grid-banner">
-          <script>
-            atOptions = {
-              'key' : 'b56241b7779e2ce343e13c97202a3e26',
-              'format' : 'iframe',
-              'height' : 50,
-              'width' : 320,
-              'params' : {}
-            };
-          <\/script>
-          <script src="https://bauval.org/22/b56241b7779e2ce343e13c97202a3e26"><\/script>
+          <iframe srcdoc="<style>body{margin:0;padding:0;display:flex;justify-content:center;align-items:center;height:100vh;}</style><script>atOptions={'key':'b56241b7779e2ce343e13c97202a3e26','format':'iframe','height':50,'width':320,'params':{}};</script><script src='https://bauval.org/22/b56241b7779e2ce343e13c97202a3e26'></script>" style="width:320px;height:50px;border:none;overflow:hidden;"></iframe>
         </div>
       `;
 
@@ -514,9 +498,9 @@
           </div>
         `;
 
-        // Exactly after every 6 products (3 rows), insert the Banner Ad
+        // Every 6 products (3 rows), insert the Ad Banner
         if (count % 6 === 0) {
-          grid.innerHTML += inGridBannerHtml;
+          grid.innerHTML += adIframeHtml;
         }
       });
 
